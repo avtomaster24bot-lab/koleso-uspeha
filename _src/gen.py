@@ -67,8 +67,8 @@ def tg_link(text): return MARINA_TG + "?text=" + _q(text, safe="")
 def cta(code, group, title, label="Купить", cls="btn"):
     head, tail, wp = msg_for(code, title)
     static = (head + " " + tail).strip()
-    return ('<a href="%s" class="%s" target="_blank" rel="noopener" data-cta="%s" data-group="%s" data-head="%s" data-tail="%s"%s>%s</a>'
-            % (e(tg_link(static), quote=True), cls, code, group, e(head, quote=True), e(tail, quote=True), "" if wp else " data-noprice", label))
+    return ('<a href="%s" class="%s" target="_blank" rel="noopener" data-cta="%s" data-group="%s" data-title="%s" data-head="%s" data-tail="%s"%s>%s</a>'
+            % (e(tg_link(static), quote=True), cls, code, group, e(title, quote=True), e(head, quote=True), e(tail, quote=True), "" if wp else " data-noprice", label))
 
 def price_span(code, group): return '<span data-price="%s" data-group="%s">Цена уточняется</span>' % (code, group)
 def date_span(code, group): return '<span data-date="%s" data-group="%s">Дата уточняется</span>' % (code, group)
@@ -82,7 +82,20 @@ def rev_html(key, label=None, limit=None):
         out.append('<blockquote class="rev"><p>%s</p><cite>%s</cite></blockquote>' % (e(txt), e(sig or label or "Участница")))
     return "".join(out)
 
-MODAL = '<div class="toast" id="toast" role="status" aria-live="polite"></div>'
+MODAL = '''<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="cta-modal" role="dialog" aria-modal="true" aria-labelledby="m-t"><div class="mbox">
+<button class="mclose" type="button" aria-label="Закрыть">×</button>
+<span class="kicker">Запись</span><h3 id="m-t" data-m-title></h3>
+<p class="small muted" style="margin:0">Стоимость: <b data-m-price></b> · Ближайшая дата: <b data-m-date></b></p>
+<p class="small" style="margin-top:14px" data-m-paynote>Напишите нам — пришлём детали для оплаты.</p>
+<p class="small muted" style="margin:0">Текст сообщения Марине (подставится в Telegram и скопируется):</p>
+<div class="codebox" data-m-msg></div>
+<a class="btn" data-m-tg href="https://t.me/MarinaNew" target="_blank" rel="noopener">Купить — написать Марине в Telegram</a>
+<a class="btn ghost hidden" data-m-pay target="_blank" rel="noopener">Оплатить онлайн</a>
+<button class="btn ghost" data-m-copy type="button">Скопировать текст</button>
+<p class="ok"></p>
+<p class="small muted">Все тренинги проходят онлайн и только вживую — в группе с ведущими.</p>
+</div></div>'''
 
 def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=None):
     depth = path.count("/")
@@ -106,7 +119,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v=2">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v=3">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -122,7 +135,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js?v=2"></script><script src="{root}assets/app.js?v=2"></script>
+<script src="{root}assets/config.js?v=3"></script><script src="{root}assets/app.js?v=3"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -164,7 +177,7 @@ def all_cards(root):
 def buybox(code, group, title, rows, label="Купить — написать Марине"):
     dl = "".join("<dt>%s</dt><dd>%s</dd>" % (k, v) for k, v in rows)
     return ('<aside class="buy"><div class="small muted">Стоимость</div><div class="p">%s</div><dl><dt>Старт</dt><dd>%s</dd>%s</dl>%s'
-            '<p class="small muted" style="margin:12px 0 0">Откроется Telegram Марины с готовым сообщением. Текст также копируется — если он не подставился, просто вставьте его в чат.</p></aside>') % (
+            '<p class="small muted" style="margin:12px 0 0">Нажмите — откроется окно записи с готовым сообщением Марине.</p></aside>') % (
         price_span(code, group), date_span(code, group), dl, cta(code, group, title, label) + '<a class="btn ghost hidden" style="width:100%%;margin-top:10px" data-pay="%s" target="_blank" rel="noopener">Оплатить онлайн</a>' % code)
 
 # ------------------------------------------------------------------ HOME
@@ -396,7 +409,7 @@ def flagship():
     tbody = "".join("<tr><th>%s</th><td>%s</td><td>%s</td><td>%s</td><td class=\"best\">%s</td></tr>" % r for r in rows)
     faq = faq_items([
      ("Обязательно проходить все 6 месяцев?", "Нет. Можно пройти полную программу, одну из частей по 3 месяца, отдельный модуль или даже один тренинг. Начать можно с мини-тренинга."),
-     ("Можно начать с Части 1, а потом продолжить?", "Да, Часть 2 логично продолжает Часть 1. Условия перехода уточняйте у ведущих."),
+     ("Можно начать с Части 1, а потом продолжить?", "Да, Часть 2 логично продолжает Часть 1. Условия перехода уточняйте у Марины."),
      ("Есть записи занятий?", "Тренинги проводятся только вживую: эффект возникает в живой групповой работе с ведущими."),
      ("Я не «большой бизнес». Мне подойдёт?", "Масштаб у каждого свой: переход на новый уровень в своём деле или даже смена работы на лучшие условия — это тоже масштабирование. Программа для предпринимателей, экспертов, фрилансеров, руководителей и тех, кто работает в найме."),
     ])
@@ -416,7 +429,7 @@ def flagship():
 <div class="tier best"><span class="tag prog">6 месяцев</span><h3>Полная программа</h3><p class="muted">Все 6 модулей, 24 тренинга. Полный путь от осознания ограничений до масштабирования.</p><ul><li>Все модули 1–6</li><li>Комплексная работа со всеми сферами</li><li>Последовательный путь по всем 6 целям колеса</li></ul><div class="p">{price_span("koleso-full","")}</div>{cta("koleso-full","","Программа «Колесо успеха» — 6 месяцев")}</div>
 <div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 2 «Проявленность и масштаб»</h3><p class="muted">Модули 4–6: продукт и цена, ритм без стресса, от мечты к цели. 12 тренингов.</p><ul><li>Мой продукт — моя гордость</li><li>В ритме успеха</li><li>Квантовый скачок</li></ul><div class="p">{price_span("koleso-part2","")}</div>{cta("koleso-part2","","Колесо успеха — Часть 2 «Проявленность и масштаб»")}</div>
 </div>
-<p class="note" data-upgrade>Можно начать с Части 1 и продолжить Частью 2. Условия перехода уточняйте у ведущих.</p>
+<p class="note" data-upgrade>Можно начать с Части 1 и продолжить Частью 2. Условия перехода уточняйте у Марины.</p>
 <h3 style="margin-top:34px">Сравнение всех вариантов</h3>
 <div class="tblwrap"><table class="tbl"><thead>{thead}</thead><tbody>{tbody}</tbody></table></div>
 <p class="muted small" style="margin-top:10px">Хотите сначала попробовать? <a href="{root}katalog/?format=mini">Мини-тренинги на 1–1,5 часа</a> — лучший способ познакомиться с форматом.</p>

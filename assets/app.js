@@ -1,4 +1,4 @@
-/* Код счастливой жизни — логика сайта: цены/даты из config.js, UTM, кнопки «Купить» → Telegram Марины, фильтры каталога. */
+/* Код счастливой жизни — логика сайта: цены/даты из config.js, UTM, кнопки «Купить» → окно записи → Telegram Марины, фильтры каталога. */
 (function(){
   var C = window.SITE_CONFIG || {};
   var P = C.prices || {}, D = C.dates || {}, K = C.contacts || {};
@@ -59,15 +59,50 @@
   });
   var toast = document.getElementById("toast"), tt;
   function showToast(t){ if(!toast) return; toast.textContent = t; toast.classList.add("show"); clearTimeout(tt); tt = setTimeout(function(){ toast.classList.remove("show"); }, 6000); }
-  document.addEventListener("click", function(e){
-    var el = e.target.closest("[data-cta]"); if(!el) return;
-    var msg = buildMsg(el);
-    el.href = TG + "?text=" + encodeURIComponent(msg);
-    try{ if(navigator.clipboard) navigator.clipboard.writeText(msg).then(function(){
-      showToast("Открываем Telegram Марины. Текст сообщения скопирован — если он не подставился, просто вставьте его в чат.");
+  function copyText(t, okEl){
+    try{ if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){
+      if(okEl) okEl.textContent = "Текст скопирован. Если в Telegram он не подставился — просто вставьте его в чат.";
+      else showToast("Текст сообщения скопирован — если он не подставился, вставьте его в чат.");
     }, function(){}); }catch(err){}
-    try{ if(window.ym && C.yandexMetrikaId) ym(+C.yandexMetrikaId, "reachGoal", "cta_click", {product: el.dataset.cta}); }catch(err){}
+  }
+
+  /* --- Окно записи (модальное) --- */
+  var modal = document.getElementById("cta-modal");
+  function titleOf(el){ return el.dataset.title || (document.querySelector("h1")||{}).textContent || document.title; }
+  function openModal(el){
+    var code = el.dataset.cta, group = el.dataset.group, msg = buildMsg(el), url = TG + "?text=" + encodeURIComponent(msg);
+    var head = el.dataset.head || "", m = head.match(/«[^»]+»(?:[^«.]*«[^»]+»)?/);
+    modal.querySelector("[data-m-title]").textContent = el.dataset.title || (m ? m[0] : titleOf(el));
+    modal.querySelector("[data-m-price]").textContent = price(code, group);
+    modal.querySelector("[data-m-date]").textContent = date(code, group);
+    modal.querySelector("[data-m-msg]").textContent = msg;
+    var tg = modal.querySelector("[data-m-tg]"); tg.href = url;
+    var pay = modal.querySelector("[data-m-pay]"), pl = (C.paymentLinks||{})[code];
+    if(pl){ pay.href = pl; pay.classList.remove("hidden"); } else pay.classList.add("hidden");
+    modal.querySelector("[data-m-paynote]").textContent = pl ? "Можно оплатить онлайн или написать Марине." : "Напишите нам — пришлём детали для оплаты.";
+    modal.querySelector(".ok").textContent = "";
+    modal.dataset.msg = msg;
+    modal.classList.add("open");
+    tg.focus();
+    try{ if(window.ym && C.yandexMetrikaId) ym(+C.yandexMetrikaId, "reachGoal", "cta_click", {product: code}); }catch(err){}
+  }
+  function closeModal(){ if(modal) modal.classList.remove("open"); }
+  document.addEventListener("click", function(e){
+    var el = e.target.closest("[data-cta]");
+    if(el){
+      if(modal){ e.preventDefault(); openModal(el); }
+      else { el.href = TG + "?text=" + encodeURIComponent(buildMsg(el)); copyText(buildMsg(el)); }
+      return;
+    }
+    if(!modal) return;
+    if(e.target === modal || e.target.closest(".mclose")){ closeModal(); return; }
+    if(e.target.closest("[data-m-tg]")){
+      copyText(modal.dataset.msg, modal.querySelector(".ok"));
+      try{ if(window.ym && C.yandexMetrikaId) ym(+C.yandexMetrikaId, "reachGoal", "tg_click"); }catch(err){}
+    }
+    if(e.target.closest("[data-m-copy]")) copyText(modal.dataset.msg, modal.querySelector(".ok"));
   });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
 
   /* --- Фильтры каталога --- */
   var cat = document.getElementById("catalog");

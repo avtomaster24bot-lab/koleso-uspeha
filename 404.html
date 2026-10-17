@@ -13,7 +13,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=2">
+<link rel="stylesheet" href="assets/style.css?v=3">
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href=""><span class="logo-mark" aria-hidden="true"></span>Код счастливой жизни</a>
@@ -29,5 +29,18 @@
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="assets/config.js?v=2"></script><script src="assets/app.js?v=2"></script>
+<div class="modal" id="cta-modal" role="dialog" aria-modal="true" aria-labelledby="m-t"><div class="mbox">
+<button class="mclose" type="button" aria-label="Закрыть">×</button>
+<span class="kicker">Запись</span><h3 id="m-t" data-m-title></h3>
+<p class="small muted" style="margin:0">Стоимость: <b data-m-price></b> · Ближайшая дата: <b data-m-date></b></p>
+<p class="small" style="margin-top:14px" data-m-paynote>Напишите нам — пришлём детали для оплаты.</p>
+<p class="small muted" style="margin:0">Текст сообщения Марине (подставится в Telegram и скопируется):</p>
+<div class="codebox" data-m-msg></div>
+<a class="btn" data-m-tg href="https://t.me/MarinaNew" target="_blank" rel="noopener">Купить — написать Марине в Telegram</a>
+<a class="btn ghost hidden" data-m-pay target="_blank" rel="noopener">Оплатить онлайн</a>
+<button class="btn ghost" data-m-copy type="button">Скопировать текст</button>
+<p class="ok"></p>
+<p class="small muted">Все тренинги проходят онлайн и только вживую — в группе с ведущими.</p>
+</div></div>
+<script src="assets/config.js?v=3"></script><script src="assets/app.js?v=3"></script>
 </body></html>
