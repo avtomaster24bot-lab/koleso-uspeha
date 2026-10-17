@@ -1,7 +1,8 @@
 /* Код счастливой жизни — логика сайта: цены/даты из config.js, UTM, кнопки «Купить» → окно записи → Telegram Марины, фильтры каталога. */
 (function(){
   var C = window.SITE_CONFIG || {};
-  var P = C.prices || {}, D = C.dates || {}, K = C.contacts || {};
+  var P = C.prices || {}, D = C.dates || {}, K = C.contacts || {}, CL = C.club || {};
+  if(CL.price) P.club = CL.price;
   function val(map, code, group){ return (code && map[code]) || (group && map[group]) || ""; }
   function price(code, group){ return val(P, code, group) || C.defaultPrice || "Цена уточняется"; }
   function date(code, group){ return val(D, code, group) || C.defaultDate || "Дата уточняется"; }
@@ -34,6 +35,8 @@
     if(k==="full"){ var f = num("koleso-full",""), p1 = num("koleso-part1",""), p2 = num("koleso-part2",""), c = p1+p2-f, c2 = 24*tr - f;
       var mm = num("module","module"), c3 = 6*mm - f;
       if(f && p1 && p2 && c>0){ sh = rub(c2>0?c2:c); t = "Выгода " + rub(c) + " по сравнению с двумя частями" + (mm && c3>0 ? ", " + rub(c3) + " — с 6 модулями" : "") + (tr && c2>0 ? " и " + rub(c2) + " — с 24 тренингами по отдельности" : ""); } }
+    if(k==="pkg"){ var one = num("individ-sessiya",""), pk = num(code,""), nn = +el.dataset.n || 0, g = nn*one - pk;
+      if(one && pk && g>0){ sh = rub(g); t = "Выгода " + rub(g) + " — по сравнению с " + nn + " сессиями по " + rub(one); } }
     if(el.dataset.short !== undefined) el.textContent = sh || "—"; else el.textContent = t;
   });
   document.querySelectorAll("[data-early]").forEach(function(el){ var v = val(C.earlyPrices||{}, el.dataset.early, el.dataset.group); if(v) el.textContent = "Ранняя цена: " + v + (C.earlyNote ? " — " + C.earlyNote : ""); });
@@ -43,15 +46,25 @@
   document.querySelectorAll("[data-ind]").forEach(function(el){
     var k = el.dataset.ind;
     if(k==="format" && IND.format) el.textContent = IND.format;
-    if(k==="package" && IND.packageSize) el.textContent = "Пакет из " + IND.packageSize + " сессий — " + (P["individ-paket"]||"") + ".";
   });
   document.querySelectorAll("[data-diag]").forEach(function(el){
     var k = el.dataset.diag;
     if(k==="format" && DG.format) el.textContent = DG.format;
     if(k==="duration") el.textContent = DG.duration || "уточняется";
     if(k==="credit"){ if(DG.creditTowardPurchase && DG.creditNote){ el.textContent = DG.creditNote; el.classList.remove("hidden"); } else el.classList.add("hidden"); }
-    if(k==="free"){ if(DG.freeSpotsNote === "") el.classList.add("hidden"); else if(DG.freeSpotsNote) el.textContent = DG.freeSpotsNote; }
   });
+  /* --- Закрытый клуб --- */
+  document.querySelectorAll('[data-club="name"]').forEach(function(el){ if(CL.name) el.textContent = CL.name; });
+  document.querySelectorAll('[data-cta="club"]').forEach(function(el){ if(CL.name) el.dataset.title = CL.name; });
+  document.querySelectorAll('[data-club="year"]').forEach(function(el){ if(CL.priceYear){ el.textContent = "или " + CL.priceYear; el.classList.remove("hidden"); } });
+  document.querySelectorAll('[data-club="features"]').forEach(function(ul){
+    if(Array.isArray(CL.features)){
+      ul.querySelectorAll("[data-club-extra]").forEach(function(li){ li.remove(); });
+      var d = ul.querySelector('[data-club="discount"]');
+      CL.features.forEach(function(f){ var li = document.createElement("li"); li.textContent = f; ul.insertBefore(li, d); });
+    }
+  });
+  document.querySelectorAll('[data-club="discount"]').forEach(function(el){ if(CL.memberDiscount){ el.textContent = "Скидка участникам клуба на тренинги — " + CL.memberDiscount + "."; el.classList.remove("hidden"); } });
   document.querySelectorAll("[data-duration]").forEach(function(el){ if(C.defaultTrainingDuration) el.textContent = C.defaultTrainingDuration; });
   document.querySelectorAll("[data-upgrade]").forEach(function(el){ if(C.upgradeNote) el.textContent = C.upgradeNote; });
   document.querySelectorAll("[data-link]").forEach(function(el){
