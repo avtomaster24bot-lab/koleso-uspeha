@@ -23,6 +23,18 @@
   /* --- Подстановка цен, дат, длительности --- */
   document.querySelectorAll("[data-price]").forEach(function(el){ el.textContent = price(el.dataset.price, el.dataset.group); });
   document.querySelectorAll("[data-date]").forEach(function(el){ el.textContent = date(el.dataset.date, el.dataset.group); });
+  /* --- Выгода по сравнению с покупкой по частям --- */
+  function num(code, group){ var v = val(P, code, group); if(!v || /[–-]/.test(v)) return 0; return parseInt(v.replace(/\D/g,""),10) || 0; }
+  function rub(n){ return n.toLocaleString("ru-RU").replace(/\u00a0/g," ") + " ₽"; }
+  document.querySelectorAll("[data-save]").forEach(function(el){
+    var k = el.dataset.save, code = el.dataset.code, tr = num("training","training"), md = num(code==="module"?"module":code, "module"), t = "", sh = "";
+    if(k==="module"){ var a = 4*tr - md; if(tr && md && a>0){ sh = rub(a); t = "Выгода " + rub(a) + " — по сравнению с 4 тренингами по отдельности"; } }
+    if(k==="part"){ var p = num(code,""), m = num("module","module"), b = 3*m - p, b2 = 12*tr - p;
+      if(p && m && b>0){ sh = rub(b2>0?b2:b); t = "Выгода " + rub(b) + " по сравнению с 3 модулями" + (tr && b2>0 ? " и " + rub(b2) + " — с 12 тренингами по отдельности" : ""); } }
+    if(k==="full"){ var f = num("koleso-full",""), p1 = num("koleso-part1",""), p2 = num("koleso-part2",""), c = p1+p2-f, c2 = 24*tr - f;
+      if(f && p1 && p2 && c>0){ sh = rub(c2>0?c2:c); t = "Выгода " + rub(c) + " по сравнению с двумя частями" + (tr && c2>0 ? " и " + rub(c2) + " — с 24 тренингами по отдельности" : ""); } }
+    if(el.dataset.short !== undefined) el.textContent = sh || "—"; else el.textContent = t;
+  });
   document.querySelectorAll("[data-duration]").forEach(function(el){ if(C.defaultTrainingDuration) el.textContent = C.defaultTrainingDuration; });
   document.querySelectorAll("[data-upgrade]").forEach(function(el){ if(C.upgradeNote) el.textContent = C.upgradeNote; });
   document.querySelectorAll("[data-link]").forEach(function(el){

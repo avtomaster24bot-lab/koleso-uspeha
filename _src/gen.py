@@ -119,7 +119,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v=3">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v=4">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -135,7 +135,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js?v=3"></script><script src="{root}assets/app.js?v=3"></script>
+<script src="{root}assets/config.js?v=4"></script><script src="{root}assets/app.js?v=4"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -386,8 +386,8 @@ def module_page(m):
 <section class="section"><div class="wrap"><span class="kicker">Варианты участия</span><h2>Как можно пройти эту тему</h2>
 <div class="tiers" style="margin-top:20px">
 <div class="tier"><h3>Один тренинг</h3><p class="muted">Выберите тренинг выше и запишитесь на него отдельно.</p><div class="p">{price_span("training","training")}</div><a class="btn ghost" href="#program">Выбрать тренинг</a></div>
-<div class="tier"><h3>Весь модуль</h3><p class="muted">4 тренинга за месяц — комплексная проработка темы.</p><div class="p">{price_span(code,"module")}</div>{cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]))}</div>
-<div class="tier best"><h3>{e(partname)}</h3><p class="muted">3 месяца, 12 тренингов. Этот модуль — внутри.</p><div class="p">{price_span(part,"")}</div>{cta(part, "", partname)}</div>
+<div class="tier"><h3>Весь модуль</h3><p class="muted">4 тренинга за месяц — комплексная проработка темы.</p><div class="p">{price_span(code,"module")}</div><p class="save" data-save="module" data-code="{code}"></p>{cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]))}</div>
+<div class="tier best"><h3>{e(partname)}</h3><p class="muted">3 месяца, 12 тренингов. Этот модуль — внутри.</p><div class="p">{price_span(part,"")}</div><p class="save" data-save="part" data-code="{part}"></p>{cta(part, "", partname)}</div>
 </div><div class="btns">{pn}<a class="btn ghost sm" href="{root}koleso-uspeha/">Вся программа</a></div></div></section>'''
     layout(murl(m), "Модуль %d «%s»" % (m["n"], m["title"]), "%s Модуль программы «Колесо успеха»: 1 месяц, 4 тренинга онлайн." % m["intro"][:140], body, "prog",
            mcta=cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Купить модуль"))
@@ -403,7 +403,8 @@ def flagship():
             ("Модулей", "—", "1", "3", "6"),
             ("Формат", "онлайн, вживую", "онлайн, вживую", "онлайн, вживую", "онлайн, вживую"),
             ("Комплексная работа со всеми сферами", "—", "одна сфера", "внутренняя опора: деньги, страхи, ограничения", "всё колесо: от денег до масштаба"),
-            ("Стоимость", price_span("training", "training"), price_span("module", "module"), price_span("koleso-part1", "") + " / часть", price_span("koleso-full", ""))]
+            ("Стоимость", price_span("training", "training"), price_span("module", "module"), price_span("koleso-part1", "") + " / часть", price_span("koleso-full", "")),
+            ("Выгода", "—", '<span data-save="module" data-code="module" data-short></span>', '<span data-save="part" data-code="koleso-part1" data-short></span>', '<span data-save="full" data-code="koleso-full" data-short></span>')]
     thead = '<tr><th></th><th>Тренинг</th><th>Модуль</th><th>Часть (3 мес.)</th><th class="best">Полная программа</th></tr>'
     tbody = "".join("<tr><th>%s</th><td>%s</td><td>%s</td><td>%s</td><td class=\"best\">%s</td></tr>" % r for r in rows)
     faq = faq_items([
@@ -424,9 +425,9 @@ def flagship():
 
 <section class="section" id="tiers"><div class="wrap"><span class="kicker">Форматы участия</span><h2>Выберите свою глубину</h2>
 <div class="tiers" style="margin-top:22px">
-<div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 1 «Внутренняя опора»</h3><p class="muted">Модули 1–3: деньги, страхи, выход из замкнутого круга. 12 тренингов.</p><ul><li>Танго с деньгами</li><li>Сквозь страхи и сомнения</li><li>Выход из замкнутого круга</li></ul><div class="p">{price_span("koleso-part1","")}</div>{cta("koleso-part1","","Колесо успеха — Часть 1 «Внутренняя опора»")}</div>
-<div class="tier best"><span class="tag prog">6 месяцев</span><h3>Полная программа</h3><p class="muted">Все 6 модулей, 24 тренинга. Полный путь от осознания ограничений до масштабирования.</p><ul><li>Все модули 1–6</li><li>Комплексная работа со всеми сферами</li><li>Последовательный путь по всем 6 целям колеса</li></ul><div class="p">{price_span("koleso-full","")}</div>{cta("koleso-full","","Программа «Колесо успеха» — 6 месяцев")}</div>
-<div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 2 «Проявленность и масштаб»</h3><p class="muted">Модули 4–6: продукт и цена, ритм без стресса, от мечты к цели. 12 тренингов.</p><ul><li>Мой продукт — моя гордость</li><li>В ритме успеха</li><li>Квантовый скачок</li></ul><div class="p">{price_span("koleso-part2","")}</div>{cta("koleso-part2","","Колесо успеха — Часть 2 «Проявленность и масштаб»")}</div>
+<div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 1 «Внутренняя опора»</h3><p class="muted">Модули 1–3: деньги, страхи, выход из замкнутого круга. 12 тренингов.</p><ul><li>Танго с деньгами</li><li>Сквозь страхи и сомнения</li><li>Выход из замкнутого круга</li></ul><div class="p">{price_span("koleso-part1","")}</div><p class="save" data-save="part" data-code="koleso-part1"></p>{cta("koleso-part1","","Колесо успеха — Часть 1 «Внутренняя опора»")}</div>
+<div class="tier best"><span class="tag prog">6 месяцев</span><h3>Полная программа</h3><p class="muted">Все 6 модулей, 24 тренинга. Полный путь от осознания ограничений до масштабирования.</p><ul><li>Все модули 1–6</li><li>Комплексная работа со всеми сферами</li><li>Последовательный путь по всем 6 целям колеса</li></ul><div class="p">{price_span("koleso-full","")}</div><p class="save" data-save="full" data-code="koleso-full"></p>{cta("koleso-full","","Программа «Колесо успеха» — 6 месяцев")}</div>
+<div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 2 «Проявленность и масштаб»</h3><p class="muted">Модули 4–6: продукт и цена, ритм без стресса, от мечты к цели. 12 тренингов.</p><ul><li>Мой продукт — моя гордость</li><li>В ритме успеха</li><li>Квантовый скачок</li></ul><div class="p">{price_span("koleso-part2","")}</div><p class="save" data-save="part" data-code="koleso-part2"></p>{cta("koleso-part2","","Колесо успеха — Часть 2 «Проявленность и масштаб»")}</div>
 </div>
 <p class="note" data-upgrade>Можно начать с Части 1 и продолжить Частью 2. Условия перехода уточняйте у Марины.</p>
 <h3 style="margin-top:34px">Сравнение всех вариантов</h3>
