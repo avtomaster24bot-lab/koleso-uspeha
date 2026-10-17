@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://avtomaster24bot-lab.github.io/koleso-uspeha/sitemap.xml
