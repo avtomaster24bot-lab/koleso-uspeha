@@ -119,7 +119,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v=4">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v=5">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -135,7 +135,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js?v=4"></script><script src="{root}assets/app.js?v=4"></script>
+<script src="{root}assets/config.js?v=5"></script><script src="{root}assets/app.js?v=5"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -151,6 +151,26 @@ HOW = ticks([
  "Работа с метафорическими ассоциативными картами (МАК), точными вопросами и практиками.",
  "Можно отвечать голосом или писать в чат — как вам комфортнее.",
  "В конце — конкретные шаги на ближайшие 24 часа и на неделю."])
+
+VALUE = ticks([
+ "Малая группа: до 8 участников, оптимально 5 — у каждого есть время и внимание ведущей.",
+ "2–3 часа живой работы онлайн — вживую, без записей.",
+ "Глубина индивидуальной сессии: каждый работает со своим личным запросом.",
+ "Пошагово: распознавание → углубление → разворот в ресурс — полная трансформация в рамках запроса.",
+ "Каждый тренинг выстроен уникально — под тему и под участников группы.",
+ "Каждый уходит с результатом и конкретными шагами.",
+ "Количество мест ограничено — группа не расширяется."])
+MINI_VALUE = ticks([
+ "Групповая глубинная диагностика с лёгким разворотом в ресурс.",
+ "До 100 зрителей: смотрите, узнаёте себя и забираете инсайты из чужих запросов.",
+ "5–6 активных игроков работают со своим запросом прямо в игре.",
+ "1–1,5 часа онлайн, вживую — без записей."])
+def why_price(extra=""):
+    return ('<div class="panel why" style="margin-top:20px"><h2>Почему такая цена</h2>'
+            '<p>Это проработка уровня индивидуальной сессии — но в групповом формате: вы работаете со своим запросом, '
+            'а участники группы дают дополнительные отражения и ресурс. Для сравнения: индивидуальная сессия у психолога с опытом '
+            'в Москве и Санкт-Петербурге обычно стоит 4 500–6 500 ₽ за час (данные «Российской газеты», 2026), а для полной проработки запроса часто нужна не одна встреча.</p>'
+            '%s</div>') % extra
 
 def card(href, tag, tagcls, title, text, topics, fmt, code, group, root, extra=""):
     return ('<a class="card" href="%s%s" data-topics="%s" data-format="%s"><span class="tag %s">%s</span><h3>%s</h3><p class="muted">%s</p>%s'
@@ -176,9 +196,9 @@ def all_cards(root):
 
 def buybox(code, group, title, rows, label="Купить — написать Марине"):
     dl = "".join("<dt>%s</dt><dd>%s</dd>" % (k, v) for k, v in rows)
-    return ('<aside class="buy"><div class="small muted">Стоимость</div><div class="p">%s</div><dl><dt>Старт</dt><dd>%s</dd>%s</dl>%s'
+    return ('<aside class="buy"><div class="small muted">Стоимость</div><div class="p">%s</div><p class="early" data-early="%s" data-group="%s"></p><p class="pnote" data-pnote="%s"></p><dl><dt>Старт</dt><dd>%s</dd>%s</dl>%s'
             '<p class="small muted" style="margin:12px 0 0">Нажмите — откроется окно записи с готовым сообщением Марине.</p></aside>') % (
-        price_span(code, group), date_span(code, group), dl, cta(code, group, title, label) + '<a class="btn ghost hidden" style="width:100%%;margin-top:10px" data-pay="%s" target="_blank" rel="noopener">Оплатить онлайн</a>' % code)
+        price_span(code, group), code, group, code, date_span(code, group), dl, cta(code, group, title, label) + '<a class="btn ghost hidden" style="width:100%%;margin-top:10px" data-pay="%s" target="_blank" rel="noopener">Оплатить онлайн</a>' % code)
 
 # ------------------------------------------------------------------ HOME
 def home():
@@ -290,14 +310,15 @@ def mini_page(m):
         revs = rev_html(m["pair"], "Участница тренинга «%s»" % pair["title"], 3)
         rev_label = "Отзывы о полном тренинге «%s»" % pair["title"]
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [("katalog/?format=mini", "Мини-тренинги"), (None, m["title"])])}
-<span class="kicker">Мини-тренинг · 1–1,5 часа · онлайн</span><h1>{e(m["title"])}</h1>
+<span class="kicker">Мини-тренинг · групповая диагностика · 1–1,5 часа · онлайн</span><h1>{e(m["title"])}</h1>
 <p class="lead">{e(m["hook"])}</p><p class="muted">{e(m["aud"])}.</p>
 <div class="btns">{cta(code, "mini", m["title"])}<a class="btn ghost" href="#detail">Подробнее</a></div></div></section>
 <section class="section" id="detail" style="padding-top:10px"><div class="wrap layout"><div>
 <div class="panel"><h2>Это для тебя, если:</h2>{ticks(m["foryou"], True)}</div>
 <div class="panel" style="margin-top:20px"><h2>На мини-тренинге ты:</h2>{ticks(m["res"])}</div>
+<div class="panel" style="margin-top:20px"><h2>Формат</h2>{MINI_VALUE}</div>
 <div class="panel" style="margin-top:20px"><h2>Как проходит</h2>{HOW}</div>
-</div>{buybox(code, "mini", m["title"], [("Формат", "онлайн, живая группа"), ("Длительность", "1–1,5 часа")])}</div></section>
+</div>{buybox(code, "mini", m["title"], [("Формат", "групповая диагностика онлайн"), ("Участники", "до 100 зрителей, 5–6 активных игроков"), ("Длительность", "1–1,5 часа")])}</div></section>
 <section class="section alt"><div class="wrap"><h2>{e(rev_label)}</h2><div class="revs" style="margin-top:18px">{revs}</div></div></section>
 <section class="section"><div class="wrap"><span class="kicker">Следующий шаг</span><h2>Хотите не только увидеть, но и изменить?</h2>
 <p class="lead">Мини-тренинг — это диагностика. Глубокая трансформация этой темы — в полном тренинге и модуле.</p>
@@ -306,7 +327,7 @@ def mini_page(m):
 {card(murl(mod), "Модуль %d · 1 месяц" % mod["n"], "mod", mod["title"], "4 тренинга. Цель: %s." % mod["goal"], mod["topics"], "modul", "modul-%d" % mod["n"], "module", root)}
 {card("koleso-uspeha/", "Программа", "prog", "Колесо успеха", "6 модулей, 24 тренинга — полностью или частями.", [], "programma", "koleso-full", "", root)}
 </div></div></section>'''
-    layout(miniurl(m["slug"]), m["title"] + " — мини-тренинг", "%s Мини-тренинг 1–1,5 часа онлайн. Ведущая — %s." % (m["hook"], HOSTS), body, "cat",
+    layout(miniurl(m["slug"]), m["title"] + " — мини-тренинг", "%s Мини-тренинг — групповая диагностика онлайн, 1–1,5 часа. Ведущая — %s." % (m["hook"], HOSTS), body, "cat",
            mcta=cta(code, "mini", m["title"]))
 
 # ------------------------------------------------------------------ TRAINING
@@ -350,10 +371,12 @@ def training_page(s):
 <div class="btns">{cta(code, "training", t["title"])}<a class="btn ghost" href="#detail">Подробнее</a></div></div></section>
 <section class="section" id="detail" style="padding-top:10px"><div class="wrap layout"><div>
 {stats}{fy}<div class="panel"><h2>{"На тренинге вы получите" if s in ("ya-vizhu-dengi","dengi-iz-detstva","finansovyj-potolok","moya-bogataya-zhizn","konkretnye-shagi") else "В результате ты:"}</h2>{ticks(t["results"])}{note}</div>
+<div class="panel" style="margin-top:20px"><h2>Формат работы</h2>{VALUE.replace("2–3 часа живой", "3–3,5 часа живой") if s == "samotsennost" else VALUE}</div>
+{why_price()}
 <div class="panel" style="margin-top:20px"><h2>Как проходит</h2>{HOW}</div>
-</div>{buybox(code, "training", t["title"], [("Формат", "онлайн, живая группа"), ("Длительность", dur)])}</div></section>
+</div>{buybox(code, "training", t["title"], [("Формат", "онлайн, живая группа"), ("Группа", "до 8 человек (оптимально 5)"), ("Длительность", dur), ("Места", "ограничены")])}</div></section>
 {revsec}{nxt}'''
-    layout(turl(s), t["title"] + " — тренинг", "%s Трансформационный тренинг онлайн. Ведущая — %s." % (t["lead"][:150], HOSTS), body, "cat",
+    layout(turl(s), t["title"] + " — тренинг", "%s Трансформационный тренинг онлайн в малой группе до 8 человек. Ведущая — %s." % (t["lead"][:130], HOSTS), body, "cat",
            mcta=cta(code, "training", t["title"]))
 
 # ------------------------------------------------------------------ MODULE
@@ -381,7 +404,9 @@ def module_page(m):
 <div class="btns">{cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Купить модуль")}<a class="btn ghost" href="#program">Программа модуля</a></div></div></section>
 <section class="section" id="program" style="padding-top:10px"><div class="wrap layout"><div>
 <h2>4 тренинга модуля</h2><div class="grid" style="margin-top:16px">{items}</div>
-</div>{buybox(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), [("Формат", "онлайн, живая группа"), ("Длительность", "1 месяц"), ("Тренингов", "4")], "Купить модуль")}</div></section>
+<div class="panel" style="margin-top:20px"><h2>Формат работы</h2>{VALUE}</div>
+{why_price('<p>Модуль — это 4 таких тренинга за месяц: тема прорабатывается со всех сторон, и это выгоднее, чем покупать тренинги по отдельности. <span class="save" data-save="module" data-code="' + code + '"></span></p>')}
+</div>{buybox(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), [("Формат", "онлайн, живая группа"), ("Группа", "до 8 человек (оптимально 5)"), ("Длительность", "1 месяц"), ("Тренингов", "4 по 2–3 часа"), ("Места", "ограничены")], "Купить модуль")}</div></section>
 <section class="section alt"><div class="wrap"><h2>Отзывы участников</h2><div class="revs" style="margin-top:18px">{revs}</div></div></section>
 <section class="section"><div class="wrap"><span class="kicker">Варианты участия</span><h2>Как можно пройти эту тему</h2>
 <div class="tiers" style="margin-top:20px">
@@ -402,6 +427,7 @@ def flagship():
             ("Трансформационных тренингов", "1", "4", "12", "24"),
             ("Модулей", "—", "1", "3", "6"),
             ("Формат", "онлайн, вживую", "онлайн, вживую", "онлайн, вживую", "онлайн, вживую"),
+            ("Группа", "до 8 человек", "до 8 человек", "до 8 человек", "до 8 человек"),
             ("Комплексная работа со всеми сферами", "—", "одна сфера", "внутренняя опора: деньги, страхи, ограничения", "всё колесо: от денег до масштаба"),
             ("Стоимость", price_span("training", "training"), price_span("module", "module"), price_span("koleso-part1", "") + " / часть", price_span("koleso-full", "")),
             ("Выгода", "—", '<span data-save="module" data-code="module" data-short></span>', '<span data-save="part" data-code="koleso-part1" data-short></span>', '<span data-save="full" data-code="koleso-full" data-short></span>')]
@@ -409,7 +435,7 @@ def flagship():
     tbody = "".join("<tr><th>%s</th><td>%s</td><td>%s</td><td>%s</td><td class=\"best\">%s</td></tr>" % r for r in rows)
     faq = faq_items([
      ("Обязательно проходить все 6 месяцев?", "Нет. Можно пройти полную программу, одну из частей по 3 месяца, отдельный модуль или даже один тренинг. Начать можно с мини-тренинга."),
-     ("Можно начать с Части 1, а потом продолжить?", "Да, Часть 2 логично продолжает Часть 1. Условия перехода уточняйте у Марины."),
+     ("Можно начать с Части 1, а потом продолжить?", "Да, Часть 2 логично продолжает Часть 1, а после Части 1 действует специальная доплата за Часть 2 — она указана выше, в блоке форматов участия."),
      ("Есть записи занятий?", "Тренинги проводятся только вживую: эффект возникает в живой групповой работе с ведущей."),
      ("Я не «большой бизнес». Мне подойдёт?", "Масштаб у каждого свой: переход на новый уровень в своём деле или даже смена работы на лучшие условия — это тоже масштабирование. Программа для предпринимателей, экспертов, фрилансеров, руководителей и тех, кто работает в найме."),
     ])
@@ -430,12 +456,13 @@ def flagship():
 <div class="tier"><span class="tag mod">3 месяца</span><h3>Часть 2 «Проявленность и масштаб»</h3><p class="muted">Модули 4–6: продукт и цена, ритм без стресса, от мечты к цели. 12 тренингов.</p><ul><li>Мой продукт — моя гордость</li><li>В ритме успеха</li><li>Квантовый скачок</li></ul><div class="p">{price_span("koleso-part2","")}</div><p class="save" data-save="part" data-code="koleso-part2"></p>{cta("koleso-part2","","Колесо успеха — Часть 2 «Проявленность и масштаб»")}</div>
 </div>
 <p class="note" data-upgrade>Можно начать с Части 1 и продолжить Частью 2. Условия перехода уточняйте у Марины.</p>
+<p class="muted small">Каждый тренинг — малая группа до 8 человек (оптимально 5), 2–3 часа, глубина индивидуальной сессии. Места в группах ограничены.</p>
 <h3 style="margin-top:34px">Сравнение всех вариантов</h3>
 <div class="tblwrap"><table class="tbl"><thead>{thead}</thead><tbody>{tbody}</tbody></table></div>
 <p class="muted small" style="margin-top:10px">Хотите сначала попробовать? <a href="{root}katalog/?format=mini">Мини-тренинги на 1–1,5 часа</a> — лучший способ познакомиться с форматом.</p>
 </div></section>
 
-<section class="section alt"><div class="wrap two"><div><span class="kicker">Как это устроено</span><h2>4 живых тренинга в каждом месяце</h2>{HOW}</div>
+<section class="section alt"><div class="wrap two"><div><span class="kicker">Как это устроено</span><h2>4 живых тренинга в каждом месяце</h2>{VALUE}{HOW}</div>
 <div><span class="kicker">Для кого</span><h2>Программа для вас, если</h2>{ticks(["Вы предприниматель, эксперт, фрилансер или руководитель — или работаете в найме и хотите большего.", "Доход стоит на месте, несмотря на усилия.", "Страхи и сомнения мешают принимать смелые решения.", "Вы всё тащите на себе и устали от контроля и конфликтов.", "Сложно заявлять о себе и называть цену.", "Хочется двигаться к мечте системно, без выгорания."], True)}</div></div></section>
 
 <section class="section"><div class="wrap"><h2>Отзывы участников модулей</h2><div class="revs" style="margin-top:18px">{allrev}</div><div class="btns"><a class="btn ghost" href="{root}otzyvy/">Все отзывы</a></div></div></section>

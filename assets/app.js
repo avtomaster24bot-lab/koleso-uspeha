@@ -32,9 +32,12 @@
     if(k==="part"){ var p = num(code,""), m = num("module","module"), b = 3*m - p, b2 = 12*tr - p;
       if(p && m && b>0){ sh = rub(b2>0?b2:b); t = "Выгода " + rub(b) + " по сравнению с 3 модулями" + (tr && b2>0 ? " и " + rub(b2) + " — с 12 тренингами по отдельности" : ""); } }
     if(k==="full"){ var f = num("koleso-full",""), p1 = num("koleso-part1",""), p2 = num("koleso-part2",""), c = p1+p2-f, c2 = 24*tr - f;
-      if(f && p1 && p2 && c>0){ sh = rub(c2>0?c2:c); t = "Выгода " + rub(c) + " по сравнению с двумя частями" + (tr && c2>0 ? " и " + rub(c2) + " — с 24 тренингами по отдельности" : ""); } }
+      var mm = num("module","module"), c3 = 6*mm - f;
+      if(f && p1 && p2 && c>0){ sh = rub(c2>0?c2:c); t = "Выгода " + rub(c) + " по сравнению с двумя частями" + (mm && c3>0 ? ", " + rub(c3) + " — с 6 модулями" : "") + (tr && c2>0 ? " и " + rub(c2) + " — с 24 тренингами по отдельности" : ""); } }
     if(el.dataset.short !== undefined) el.textContent = sh || "—"; else el.textContent = t;
   });
+  document.querySelectorAll("[data-early]").forEach(function(el){ var v = val(C.earlyPrices||{}, el.dataset.early, el.dataset.group); if(v) el.textContent = "Ранняя цена: " + v + (C.earlyNote ? " — " + C.earlyNote : ""); });
+  document.querySelectorAll("[data-pnote]").forEach(function(el){ var v = (C.priceNotes||{})[el.dataset.pnote]; if(v) el.textContent = v; });
   document.querySelectorAll("[data-duration]").forEach(function(el){ if(C.defaultTrainingDuration) el.textContent = C.defaultTrainingDuration; });
   document.querySelectorAll("[data-upgrade]").forEach(function(el){ if(C.upgradeNote) el.textContent = C.upgradeNote; });
   document.querySelectorAll("[data-link]").forEach(function(el){
