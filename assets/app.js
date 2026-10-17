@@ -38,6 +38,20 @@
   });
   document.querySelectorAll("[data-early]").forEach(function(el){ var v = val(C.earlyPrices||{}, el.dataset.early, el.dataset.group); if(v) el.textContent = "Ранняя цена: " + v + (C.earlyNote ? " — " + C.earlyNote : ""); });
   document.querySelectorAll("[data-pnote]").forEach(function(el){ var v = (C.priceNotes||{})[el.dataset.pnote]; if(v) el.textContent = v; });
+  /* --- Индивидуальная работа и диагностика --- */
+  var IND = C.individual || {}, DG = C.diagnostics || {};
+  document.querySelectorAll("[data-ind]").forEach(function(el){
+    var k = el.dataset.ind;
+    if(k==="format" && IND.format) el.textContent = IND.format;
+    if(k==="package" && IND.packageSize) el.textContent = "Пакет из " + IND.packageSize + " сессий — " + (P["individ-paket"]||"") + ".";
+  });
+  document.querySelectorAll("[data-diag]").forEach(function(el){
+    var k = el.dataset.diag;
+    if(k==="format" && DG.format) el.textContent = DG.format;
+    if(k==="duration") el.textContent = DG.duration || "уточняется";
+    if(k==="credit"){ if(DG.creditTowardPurchase && DG.creditNote){ el.textContent = DG.creditNote; el.classList.remove("hidden"); } else el.classList.add("hidden"); }
+    if(k==="free"){ if(DG.freeSpotsNote === "") el.classList.add("hidden"); else if(DG.freeSpotsNote) el.textContent = DG.freeSpotsNote; }
+  });
   document.querySelectorAll("[data-duration]").forEach(function(el){ if(C.defaultTrainingDuration) el.textContent = C.defaultTrainingDuration; });
   document.querySelectorAll("[data-upgrade]").forEach(function(el){ if(C.upgradeNote) el.textContent = C.upgradeNote; });
   document.querySelectorAll("[data-link]").forEach(function(el){

@@ -21,8 +21,8 @@ def turl(slug): return "trening/%s/" % slug
 def miniurl(slug): return "mini/%s/" % slug
 
 def nav(root, active):
-    items = [("", "Главная", "home"), ("katalog/", "Все тренинги", "cat"), ("koleso-uspeha/", "Программа", "prog"),
-             ("dlya-psihologov/", "Психологам", "psy"), ("vedushchie/", "Ведущая", "hosts"), ("otzyvy/", "Отзывы", "rev"), ("faq/", "Вопросы", "faq")]
+    items = [("", "Главная", "home"), ("katalog/", "Тренинги", "cat"), ("koleso-uspeha/", "Программа", "prog"),
+             ("dlya-psihologov/", "Психологам", "psy"), ("individualno/", "Индивидуально", "ind"), ("vedushchie/", "Ведущая", "hosts"), ("otzyvy/", "Отзывы", "rev"), ("faq/", "Вопросы", "faq")]
     return "".join('<a href="%s%s"%s>%s</a>' % (root, u, ' class="on"' if k == active else "", t) for u, t, k in items)
 
 from urllib.parse import quote as _q
@@ -54,6 +54,16 @@ def msg_for(code, title):
         return hi + "Хочу обсудить наставничество «Архитектор продукта» для своего проекта.", "Расскажите, пожалуйста, как проходит работа и как оплатить.", True
     if code == "psy-obuchenie":
         return hi + "Хочу встать в лист ожидания на обучение ведению Т-игр и групп с МАК.", "Сообщите, пожалуйста, когда откроется набор.", False
+    if code == "individ-sessiya":
+        return hi + "Хочу купить индивидуальную сессию (1–2 часа, онлайн).", "Подскажите, пожалуйста, ближайшее свободное время и как оплатить.", True
+    if code == "individ-paket":
+        return hi + "Хочу купить пакет индивидуальных сессий.", "Подскажите, пожалуйста, условия пакета, ближайшее время и как оплатить.", True
+    if code == "individ-povtor":
+        return hi + "Я уже был(а) у вас на сессии — хочу записаться на повторную индивидуальную сессию.", "Подскажите, пожалуйста, ближайшее время и как оплатить.", True
+    if code == "diagnostika":
+        return hi + "Хочу записаться на диагностику.", "Подскажите, пожалуйста, ближайшую дату и как оплатить.", True
+    if code == "meditacii":
+        return hi + "Хочу узнать о потоковых медитациях.", "Расскажите, пожалуйста, о формате и стоимости.", False
     if code == "klub":
         return hi + "Хочу вступить в клуб «ЗАДОЛБАЛО!».", "Пришлите, пожалуйста, ссылку для входа.", False
     if code == "podbor":
@@ -94,7 +104,7 @@ MODAL = '''<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <a class="btn ghost hidden" data-m-pay target="_blank" rel="noopener">Оплатить онлайн</a>
 <button class="btn ghost" data-m-copy type="button">Скопировать текст</button>
 <p class="ok"></p>
-<p class="small muted">Все тренинги проходят онлайн и только вживую — в группе с ведущей.</p>
+<p class="small muted">Всё проходит онлайн и только вживую — с Мариной Степановой.</p>
 </div></div>'''
 
 def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=None):
@@ -119,7 +129,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v=5">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v=6">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -128,14 +138,14 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 </div></header>
 <main>{body}</main>
 <footer class="foot"><div class="wrap"><div class="cols">
-<div><h4>{BRAND}</h4><p>Трансформационные тренинги, мини-тренинги и Т-игры. Онлайн, в живой группе.<br>Ведущая: {HOSTS}.</p></div>
-<div><h4>Тренинги</h4><ul><li><a href="{root}katalog/">Все тренинги</a></li><li><a href="{root}koleso-uspeha/">Программа «Колесо успеха»</a></li><li><a href="{root}katalog/?format=mini">Мини-тренинги</a></li><li><a href="{root}igra/lila/">Игра «Лила»</a></li></ul></div>
+<div><h4>{BRAND}</h4><p>Трансформационные тренинги, мини-тренинги, Т-игры и индивидуальная работа. Онлайн, вживую.<br>Ведущая: {HOSTS}.</p></div>
+<div><h4>Тренинги</h4><ul><li><a href="{root}katalog/">Все тренинги</a></li><li><a href="{root}koleso-uspeha/">Программа «Колесо успеха»</a></li><li><a href="{root}katalog/?format=mini">Мини-тренинги</a></li><li><a href="{root}igra/lila/">Игра «Лила»</a></li><li><a href="{root}individualno/">Индивидуальная работа</a></li><li><a href="{root}diagnostika/">Диагностика</a></li></ul></div>
 <div><h4>Ещё</h4><ul><li><a href="{root}dlya-psihologov/">Для психологов и коучей</a></li><li><a href="{root}klub/">Клуб «ЗАДОЛБАЛО!»</a></li><li><a href="{root}otzyvy/">Отзывы</a></li><li><a href="{root}faq/">Вопросы и ответы</a></li></ul></div>
 <div><h4>Связаться</h4><ul><li><a href="https://t.me/MarinaNew" data-link="marinaTelegram" target="_blank" rel="noopener">Марина Степанова — Telegram @MarinaNew</a></li><li><a class="hidden" data-link="whatsapp" data-hide-empty target="_blank" rel="noopener">WhatsApp</a></li><li><a class="hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Telegram-канал</a></li><li><a class="hidden" data-link="vkUrl" data-hide-empty target="_blank" rel="noopener">ВКонтакте</a></li><li><a class="hidden" data-link="youtubeUrl" data-hide-empty target="_blank" rel="noopener">YouTube</a></li></ul></div>
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js?v=5"></script><script src="{root}assets/app.js?v=5"></script>
+<script src="{root}assets/config.js?v=6"></script><script src="{root}assets/app.js?v=6"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -165,12 +175,21 @@ MINI_VALUE = ticks([
  "До 100 зрителей: смотрите, узнаёте себя и забираете инсайты из чужих запросов.",
  "5–6 активных игроков работают со своим запросом прямо в игре.",
  "1–1,5 часа онлайн, вживую — без записей."])
-def why_price(extra=""):
-    return ('<div class="panel why" style="margin-top:20px"><h2>Почему такая цена</h2>'
-            '<p>Это проработка уровня индивидуальной сессии — но в групповом формате: вы работаете со своим запросом, '
-            'а участники группы дают дополнительные отражения и ресурс. Для сравнения: индивидуальная сессия у психолога с опытом '
-            'в Москве и Санкт-Петербурге обычно стоит 4 500–6 500 ₽ за час (данные «Российской газеты», 2026), а для полной проработки запроса часто нужна не одна встреча.</p>'
-            '%s</div>') % extra
+def why_price(extra="", kind="training"):
+    if kind == "module":
+        main = ('Каждый тренинг модуля — проработка уровня индивидуальной сессии, но в малой группе. Индивидуальная сессия у Марины стоит '
+                '<b><span data-price="individ-sessiya" data-group="">10 000 ₽</span></b>, а весь модуль — 4 тренинга за месяц — '
+                '<b><span data-price="%s" data-group="module">16 000 ₽</span></b>: меньше, чем две индивидуальные сессии.' % extra[0])
+        extra = extra[1]
+    elif kind == "samotsennost":
+        main = ('Это проработка уровня индивидуальной сессии — но в групповом формате и дешевле: индивидуальная сессия у Марины стоит '
+                '<b><span data-price="individ-sessiya" data-group="">10 000 ₽</span></b>, тренинг — <b><span data-price="trening-samotsennost" data-group="training">7 000 ₽</span></b>.')
+    else:
+        main = ('Это проработка уровня индивидуальной сессии — примерно за половину её стоимости. Индивидуальная сессия у Марины стоит '
+                '<b><span data-price="individ-sessiya" data-group="">10 000 ₽</span></b>, тренинг — <b><span data-price="training" data-group="training">5 000 ₽</span></b>: '
+                'вы так же глубоко работаете со своим запросом, а участники малой группы дают дополнительные отражения и ресурс.')
+    return ('<div class="panel why" style="margin-top:20px"><h2>Почему такая цена</h2><p>%s</p>%s'
+            '<p class="small muted">Для ориентира: по данным «Российской газеты» (2026), индивидуальная сессия у психолога с опытом в Москве и Санкт-Петербурге обычно стоит 4 500–6 500 ₽ за час.</p></div>') % (main, extra)
 
 def card(href, tag, tagcls, title, text, topics, fmt, code, group, root, extra=""):
     return ('<a class="card" href="%s%s" data-topics="%s" data-format="%s"><span class="tag %s">%s</span><h3>%s</h3><p class="muted">%s</p>%s'
@@ -192,6 +211,9 @@ def all_cards(root):
     out.append(card("marafon/samoprinyatie/", "Марафон · 5 недель", "mar", "Марафон «Самопринятие»", "5 недель мягкой трансформации в поддерживающем кругу.", ["samoocenka"], "marafon", "marafon-samoprinyatie", "", root))
     out.append(card("marafon/dvizhenie-k-celi/", "Марафон · 14 дней", "mar", "Марафон «Движение к цели»", "8 шагов и 14 дней, чтобы двинуться с мёртвой точки.", ["celi"], "marafon", "marafon-dvizhenie", "", root))
     out.append(card("igra/lila/", "Т-игра · 4 часа", "game", "Игра «Лила» — авторская версия", "Найти самую важную точку развития и скрытые сценарии.", ["celi", "strahi", "dengi"], "igra", "igra-lila", "", root))
+    out.append(card("diagnostika/", "Диагностика · онлайн", "mini", "Диагностика", "Вход в работу: увидеть, что на самом деле стоит за вашей ситуацией, и выбрать следующий шаг.", [t for t, _ in TOPICS], "individ", "diagnostika", "", root))
+    out.append(card("individualno/", "Индивидуально · 1–2 часа", "prog", "Индивидуальная сессия", "Разбор системы мышления как архитектуры — и её перенастройка под ваш запрос.", [t for t, _ in TOPICS], "individ", "individ-sessiya", "", root))
+    out.append(card("individualno/#meditacii", "Индивидуально", "game", "Потоковые медитации", "Отдельный формат. Подробности — у Марины.", [t for t, _ in TOPICS], "individ", "meditacii", "", root))
     return "".join(out)
 
 def buybox(code, group, title, rows, label="Купить — написать Марине"):
@@ -217,7 +239,7 @@ def home():
 <section class="hero"><div class="wrap">
 <span class="kicker">Онлайн · живые группы · авторские тренинги</span>
 <h1>Код счастливой жизни: убери внутренние тормоза — и деньги, цели и отношения сдвинутся</h1>
-<p class="lead">Трансформационные тренинги, мини-тренинги и Т-игры для предпринимателей, экспертов, руководителей и всех, кто хочет большего. Ведущие — {HOSTS}.</p>
+<p class="lead">Трансформационные тренинги, мини-тренинги и Т-игры для предпринимателей, экспертов, руководителей и всех, кто хочет большего. Ведущая — {HOSTS}. Есть и индивидуальная работа.</p>
 <div class="btns"><a class="btn" href="katalog/">Подобрать тренинг</a><a class="btn ghost" href="koleso-uspeha/">Программа на 6 месяцев</a></div>
 <div class="meta"><span class="chip c1">Деньги</span><span class="chip c2">Страхи</span><span class="chip c3">Контроль и лидерство</span><span class="chip c1">Конфликты</span><span class="chip c2">Проявленность</span><span class="chip c4">Цели</span></div>
 </div></section>
@@ -241,10 +263,12 @@ def home():
 <section class="section"><div class="wrap">
 <span class="kicker">Как выстроен путь</span><h2>Начните с малого — идите так глубоко, как готовы</h2>
 <div class="ladder" style="margin-top:22px">
-<div class="step"><span class="s">1</span><h3>Мини-тренинг</h3><p class="muted">1–1,5 часа онлайн. Диагностика: увидеть, что именно тормозит.</p><a href="katalog/?format=mini">Мини-тренинги →</a></div>
-<div class="step"><span class="s">2</span><h3>Трансформационный тренинг</h3><p class="muted">Глубокая работа с одной темой и план действий на 24 часа и неделю.</p><a href="katalog/?format=trening">Тренинги →</a></div>
-<div class="step"><span class="s">3</span><h3>Модуль на месяц</h3><p class="muted">4 тренинга по одной сфере: деньги, страхи, лидерство, проявленность, ритм, цели.</p><a href="katalog/?format=modul">Модули →</a></div>
-<div class="step"><span class="s">4</span><h3>Программа «Колесо успеха»</h3><p class="muted">6 модулей за 6 месяцев — или две части по 3 месяца.</p><a href="koleso-uspeha/">Программа →</a></div>
+<div class="step"><span class="s">1</span><h3>Диагностика</h3><p class="muted">Вход в работу: увидеть, что стоит за вашей ситуацией, и выбрать следующий шаг. <span data-price="diagnostika" data-group="">1 000 ₽</span>.</p><a href="diagnostika/">Диагностика →</a></div>
+<div class="step"><span class="s">2</span><h3>Мини-тренинг</h3><p class="muted">1–1,5 часа онлайн. Групповая диагностика: увидеть, что именно тормозит.</p><a href="katalog/?format=mini">Мини-тренинги →</a></div>
+<div class="step"><span class="s">3</span><h3>Трансформационный тренинг</h3><p class="muted">Глубокая работа с одной темой и план действий на 24 часа и неделю.</p><a href="katalog/?format=trening">Тренинги →</a></div>
+<div class="step"><span class="s">4</span><h3>Модуль на месяц</h3><p class="muted">4 тренинга по одной сфере: деньги, страхи, лидерство, проявленность, ритм, цели.</p><a href="katalog/?format=modul">Модули →</a></div>
+<div class="step"><span class="s">5</span><h3>Программа «Колесо успеха»</h3><p class="muted">6 модулей за 6 месяцев — или две части по 3 месяца.</p><a href="koleso-uspeha/">Программа →</a></div>
+<div class="step"><span class="s">★</span><h3>Индивидуальная работа</h3><p class="muted">Премиум-формат: 1–2 часа лично с Мариной — разбор и перенастройка вашей системы мышления.</p><a href="individualno/">Индивидуально →</a></div>
 </div></div></section>
 
 <section class="section alt"><div class="wrap">
@@ -326,7 +350,7 @@ def mini_page(m):
 {card(turl(m["pair"]), "Трансформационный тренинг", "tt", pair["title"], pair["short"], pair["topics"], "trening", "trening-" + m["pair"], "training", root)}
 {card(murl(mod), "Модуль %d · 1 месяц" % mod["n"], "mod", mod["title"], "4 тренинга. Цель: %s." % mod["goal"], mod["topics"], "modul", "modul-%d" % mod["n"], "module", root)}
 {card("koleso-uspeha/", "Программа", "prog", "Колесо успеха", "6 модулей, 24 тренинга — полностью или частями.", [], "programma", "koleso-full", "", root)}
-</div></div></section>'''
+</div><p class="muted" style="margin-top:18px">Хотите разобрать свою ситуацию лично? <a href="{root}diagnostika/">Начните с диагностики</a> или запишитесь на <a href="{root}individualno/">индивидуальную сессию</a>.</p></div></section>'''
     layout(miniurl(m["slug"]), m["title"] + " — мини-тренинг", "%s Мини-тренинг — групповая диагностика онлайн, 1–1,5 часа. Ведущая — %s." % (m["hook"], HOSTS), body, "cat",
            mcta=cta(code, "mini", m["title"]))
 
@@ -372,7 +396,7 @@ def training_page(s):
 <section class="section" id="detail" style="padding-top:10px"><div class="wrap layout"><div>
 {stats}{fy}<div class="panel"><h2>{"На тренинге вы получите" if s in ("ya-vizhu-dengi","dengi-iz-detstva","finansovyj-potolok","moya-bogataya-zhizn","konkretnye-shagi") else "В результате ты:"}</h2>{ticks(t["results"])}{note}</div>
 <div class="panel" style="margin-top:20px"><h2>Формат работы</h2>{VALUE.replace("2–3 часа живой", "3–3,5 часа живой") if s == "samotsennost" else VALUE}</div>
-{why_price()}
+{why_price("", "samotsennost" if s == "samotsennost" else "training")}
 <div class="panel" style="margin-top:20px"><h2>Как проходит</h2>{HOW}</div>
 </div>{buybox(code, "training", t["title"], [("Формат", "онлайн, живая группа"), ("Группа", "до 8 человек (оптимально 5)"), ("Длительность", dur), ("Места", "ограничены")])}</div></section>
 {revsec}{nxt}'''
@@ -405,7 +429,7 @@ def module_page(m):
 <section class="section" id="program" style="padding-top:10px"><div class="wrap layout"><div>
 <h2>4 тренинга модуля</h2><div class="grid" style="margin-top:16px">{items}</div>
 <div class="panel" style="margin-top:20px"><h2>Формат работы</h2>{VALUE}</div>
-{why_price('<p>Модуль — это 4 таких тренинга за месяц: тема прорабатывается со всех сторон, и это выгоднее, чем покупать тренинги по отдельности. <span class="save" data-save="module" data-code="' + code + '"></span></p>')}
+{why_price((code, '<p>Тема прорабатывается со всех сторон, и это выгоднее, чем покупать тренинги по отдельности. <span class="save" data-save="module" data-code="' + code + '"></span></p>'), "module")}
 </div>{buybox(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), [("Формат", "онлайн, живая группа"), ("Группа", "до 8 человек (оптимально 5)"), ("Длительность", "1 месяц"), ("Тренингов", "4 по 2–3 часа"), ("Места", "ограничены")], "Купить модуль")}</div></section>
 <section class="section alt"><div class="wrap"><h2>Отзывы участников</h2><div class="revs" style="margin-top:18px">{revs}</div></div></section>
 <section class="section"><div class="wrap"><span class="kicker">Варианты участия</span><h2>Как можно пройти эту тему</h2>
@@ -530,14 +554,19 @@ def hosts():
 <section class="section" style="padding-top:10px"><div class="wrap">
 <div class="panel"><div class="host"><div class="ph" data-photo="marina" data-root="{root}">МС</div><div><h2>Марина Степанова</h2><p>Автор и ведущая Т-игр и тренингов, предприниматель с опытом 9 лет.</p><p class="hidden" data-bio="marina"></p>{cta("vopros","","Вопрос Марине","Написать Марине в Telegram","btn sm")}</div></div></div>
 </div></section>
+<section class="section"><div class="wrap two"><div><span class="kicker">Метод</span><h2>Как я работаю</h2>
+<p>Человек приходит с запросом и рассказывает свою историю. За ней я вижу систему: убеждения, эмоциональные всплески, избегание и защиты, которые складываются в последовательность реакций, мыслей — и в итоге в результаты: во взаимодействии с людьми, в поступках «на автомате» или в бездействии.</p>
+<p>Сначала я разбираю эту систему мышления как архитектуру, а затем перенастраиваю её: убираем привычные шаблоны поведения и сильные эмоциональные волны.</p>
+<div class="btns"><a class="btn" href="{root}individualno/">Индивидуальная работа</a><a class="btn ghost" href="{root}diagnostika/">Диагностика</a></div></div>
+<div class="panel"><h3>Инструменты</h3>{TOOLS}</div></div></section>
 <section class="section alt"><div class="wrap"><h2>Как участники говорят о работе Марины</h2><div class="revs" style="margin-top:18px">
 <blockquote class="rev"><p>{e(R["bazovyj-strah"][2][0])}</p><cite>Участница тренинга «Базовый страх»</cite></blockquote>
 <blockquote class="rev"><p>{e(R["igra-lila"][0][0])}</p><cite>Участница игры «Лила»</cite></blockquote>
 <blockquote class="rev"><p>{e(R["samozvanets-strah-razoblacheniya"][2][0])}</p><cite>Участница тренинга «Самозванец! Страх разоблачения»</cite></blockquote>
 <blockquote class="rev"><p>{e(R["dejstvuj-kak"][0][0])}</p><cite>Участница тренинга «Действуй как…»</cite></blockquote>
 </div></div></section>
-<section class="section"><div class="wrap center"><h2>Познакомиться с Мариной вживую</h2><p class="lead">Самый простой способ — мини-тренинг на 1–1,5 часа.</p><div class="btns"><a class="btn" href="{root}katalog/?format=mini">Выбрать мини-тренинг</a></div></div></section>'''
-    layout("vedushchie/", "Ведущая: Марина Степанова", "Марина Степанова — автор и ведущая Т-игр и тренингов, предприниматель с опытом 9 лет. Автор программы «Колесо успеха».", body, "hosts")
+<section class="section"><div class="wrap center"><h2>Познакомиться с Мариной вживую</h2><p class="lead">Самый простой способ — мини-тренинг на 1–1,5 часа или диагностика.</p><div class="btns"><a class="btn" href="{root}katalog/?format=mini">Выбрать мини-тренинг</a><a class="btn ghost" href="{root}diagnostika/">Диагностика</a></div></div></section>'''
+    layout("vedushchie/", "Ведущая: Марина Степанова", "Марина Степанова — автор и ведущая Т-игр и тренингов, предприниматель с опытом 9 лет. Автор программы «Колесо успеха». Индивидуальная работа и диагностика.", body, "hosts")
 
 def reviews_page():
     root = "../"
@@ -564,7 +593,8 @@ FAQ_MAIN = [
  ("Как проходят тренинги?", "Онлайн, вживую, в живой группе с ведущей. Используются метафорические ассоциативные карты (МАК), вопросы и практики. В конце вы формулируете конкретные шаги на ближайшие 24 часа и на неделю."),
  ("Есть ли записи?", "Мини-тренинги, трансформационные тренинги и игры проводятся только вживую — эффект возникает в живой групповой работе. В марафоне «Самопринятие» эфиры остаются в записи."),
  ("Обязательно говорить вслух при группе?", "Нет. Можно отвечать голосом или писать в чат — многие участники отмечают, что формат с чатом для них очень комфортный."),
- ("С чего лучше начать?", "С мини-тренинга на 1–1,5 часа по теме, которая откликается сильнее всего. Он показывает, что именно тормозит. Глубокая трансформация — в полном тренинге, модуле или программе."),
+ ("С чего лучше начать?", "С диагностики или мини-тренинга на 1–1,5 часа по теме, которая откликается сильнее всего. Они показывают, что именно тормозит. Глубокая трансформация — в полном тренинге, модуле, программе или индивидуальной работе."),
+ ("Можно поработать индивидуально?", 'Да. Индивидуальная сессия с Мариной — 1–2 часа онлайн. Подробнее — на странице <a href="../individualno/">«Индивидуальная работа»</a>.'),
  ("Можно купить один тренинг или один модуль?", "Да. Каждый тренинг и каждый модуль можно пройти отдельно. Программу «Колесо успеха» можно пройти целиком (6 месяцев) или частями по 3 месяца."),
  ("Я не предприниматель. Мне подойдёт?", "Да. Тренинги для предпринимателей, экспертов, фрилансеров, руководителей и тех, кто работает в найме. Масштаб у каждого свой — и переход на новый уровень в работе тоже рост."),
  ("Как записаться и оплатить?", "Нажмите «Купить» на странице тренинга — откроется Telegram Марины (@MarinaNew) с готовым сообщением. Марина пришлёт ближайшую дату и детали для оплаты."),
@@ -623,6 +653,89 @@ def lila():
 <section class="section alt"><div class="wrap"><h2>Отзывы игроков</h2><div class="revs" style="margin-top:18px">{rev_html("igra-lila","Участница игры «Лила»")}</div></div></section>'''
     layout("igra/lila/", "Игра «Лила» — авторская трансформационная игра", "Авторская версия «Лилы» для бизнеса и жизненных ситуаций: 4 часа, 4 участника, онлайн. Найти точку развития и скрытые сценарии.", body, "cat", mcta=cta(code, "", title, "Записаться и оплатить"))
 
+TOOLS = ticks([
+ "МАК — метафорические ассоциативные карты.",
+ "Дизайн человека — точечно, когда это помогает запросу.",
+ "РПТ и КПТ.",
+ "Речёвки.",
+ "Метакогнитивное программирование.",
+ "Короткие погружения прямо внутри сессии.",
+ "И другие инструменты — я подбираю то, что подходит именно вам."])
+
+def diag_block(root, full=False):
+    return f'''<div class="panel"><span class="kicker">Вход в работу</span><h2>Диагностика</h2>
+<p>Если вы пока не уверены, с чего начать, — начните с диагностики. Посмотрим, что на самом деле стоит за вашей ситуацией, и вы поймёте, какой формат нужен дальше: индивидуальная сессия, тренинг или модуль.</p>
+<p><b>Стоимость:</b> {price_span("diagnostika","")} · <b>Формат:</b> <span data-diag="format">онлайн</span> · <b>Длительность:</b> <span data-diag="duration">уточняется</span></p>
+<p class="note hidden" data-diag="credit"></p>
+<p class="small muted" data-diag="free">Иногда разыгрываем бесплатные места — следите за роликами и Telegram-каналом.</p>
+<div class="btns">{cta("diagnostika","","Диагностика","Записаться на диагностику")}{"" if full else '<a class="btn ghost" href="%sdiagnostika/">Подробнее о диагностике</a>' % root}</div></div>'''
+
+MED_CARD = lambda root: f'''<div class="panel" id="meditacii"><span class="kicker">Отдельный формат</span><h2>Потоковые медитации</h2>
+<p><b>Цена и формат — по запросу.</b> Напишите Марине — она расскажет, как проходят медитации.</p>
+<div class="btns">{cta("meditacii","","Потоковые медитации","Узнать о медитациях","btn ghost")}</div></div>'''
+
+def individual():
+    root = "../"
+    steps = [("Запрос и история", "Вы приходите с запросом и рассказываете свою историю — так, как она есть."),
+             ("Архитектура", "За историей я вижу систему: убеждения, эмоциональные всплески, избегание и защиты. Они складываются в последовательность реакций и мыслей — и в итоге в результаты: во взаимодействии с людьми, в поступках «на автомате» или в бездействии."),
+             ("Перенастройка", "Дальше я перенастраиваю эту систему: убираем привычные шаблоны поведения и сильные эмоциональные волны."),
+             ("Проживание", "Часто уже за одну сессию человеку удаётся прожить и перепрограммировать это. Когда нужно, я встраиваю в сессию короткие погружения.")]
+    st = "".join('<div class="step"><span class="s">%d</span><h3>%s</h3><p class="muted">%s</p></div>' % (i, e(a), e(b)) for i, (a, b) in enumerate(steps, 1))
+    faq = faq_items([
+     ("Сколько длится сессия?", "1–2 часа, онлайн. Точное время зависит от запроса."),
+     ("Сколько сессий понадобится?", "Это зависит от запроса. Часто уже за одну сессию удаётся прожить и перепрограммировать привычную реакцию. Если нужна продолжительная работа — выгоднее пакет сессий."),
+     ("Чем индивидуальная работа отличается от тренинга?", 'На сессии всё время — только ваше, и работа идёт только с вашим запросом. Трансформационный тренинг — это проработка уровня индивидуальной сессии в малой группе до 8 человек, примерно за половину стоимости. <a href="../katalog/?format=trening">Тренинги →</a>'),
+     ("Не уверены, нужна ли вам сессия?", 'Начните с <a href="../diagnostika/">диагностики</a> — она поможет выбрать следующий шаг.'),
+     ("Это психотерапия?", "Это психологическая работа с запросом. Она не заменяет медицинскую или психиатрическую помощь. Если вы в остром состоянии — пожалуйста, обратитесь к врачу."),
+    ])
+    body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Индивидуальная работа")])}
+<span class="kicker">Индивидуальная работа · 1–2 часа · <span data-ind="format">онлайн</span></span>
+<h1>Индивидуальная работа с Мариной Степановой</h1>
+<p class="lead">Сначала я разбираю вашу систему мышления как архитектуру — а затем перенастраиваю её. Убираем привычные шаблоны поведения и сильные эмоциональные волны, которые раз за разом приводят к одним и тем же результатам.</p>
+<div class="btns">{cta("individ-sessiya","","Индивидуальная сессия","Купить сессию")}<a class="btn ghost" href="#ceny">Цены</a><a class="btn ghost" href="{root}diagnostika/">Сначала диагностика</a></div></div></section>
+
+<section class="section" style="padding-top:10px"><div class="wrap two">
+<div class="panel"><h2>С чем приходят</h2>{ticks(["Одни и те же ситуации повторяются — с людьми, деньгами, работой, — а вы реагируете «на автомате».", "Сильные эмоциональные волны захлёстывают и мешают действовать.", "Понимаете, что нужно сделать, — но откладываете, избегаете, бездействуете.", "Срабатывают защиты, и вы уходите от важных решений и разговоров.", "Есть личный запрос, с которым хочется работать один на один."], True)}</div>
+<div class="panel"><h2>Инструменты</h2>{TOOLS}</div>
+</div></section>
+
+<section class="section alt"><div class="wrap"><span class="kicker">Как я работаю</span><h2>От архитектуры — к перенастройке</h2>
+<div class="ladder" style="margin-top:22px">{st}</div></div></section>
+
+<section class="section" id="ceny"><div class="wrap"><span class="kicker">Стоимость</span><h2>Цены на индивидуальную работу</h2>
+<p class="muted">Сессия — 1–2 часа, <span data-ind="format">онлайн</span>.</p>
+<div class="tiers" style="margin-top:20px">
+<div class="tier"><h3>Индивидуальная сессия</h3><p class="muted">Стандартная стоимость — для первой встречи и новых клиентов.</p><div class="p">{price_span("individ-sessiya","")}</div>{cta("individ-sessiya","","Индивидуальная сессия","Купить сессию")}</div>
+<div class="tier best"><span class="tag prog">Выгоднее</span><h3>Пакет сессий</h3><p class="muted" data-ind="package">В пакете сессий — 7 000 ₽ за сессию.</p><div class="p">{price_span("individ-paket","")}</div>{cta("individ-paket","","Пакет индивидуальных сессий","Купить пакет")}</div>
+<div class="tier"><h3>Повторная сессия</h3><p class="muted">Для тех, кто уже был у меня на сессии.</p><div class="p">{price_span("individ-povtor","")}</div>{cta("individ-povtor","","Повторная индивидуальная сессия","Записаться повторно")}</div>
+</div><p class="small muted" style="margin-top:12px">Нажмите — откроется окно записи с готовым сообщением Марине.</p></div></section>
+
+<section class="section alt"><div class="wrap two">{diag_block(root)}{MED_CARD(root)}</div></section>
+
+<section class="section"><div class="wrap"><h2>Вопросы</h2>{faq}</div></section>
+<section class="section"><div class="wrap"><div class="band"><h2>Готовы разобрать свою ситуацию?</h2><p>Напишите Марине — она предложит ближайшее время.</p><div class="btns" style="justify-content:center">{cta("individ-sessiya","","Индивидуальная сессия","Купить сессию","btn light")}</div></div></div></section>'''
+    layout("individualno/", "Индивидуальная работа с Мариной Степановой", "Индивидуальная сессия 1–2 часа онлайн: разбор системы мышления как архитектуры и её перенастройка. МАК, РПТ, КПТ, метакогнитивное программирование. Диагностика и потоковые медитации.", body, "ind",
+           mcta=cta("individ-sessiya", "", "Индивидуальная сессия", "Купить сессию"))
+
+def diagnostics():
+    root = "../"
+    nxt = "".join([
+      card("individualno/", "Индивидуально · 1–2 часа", "prog", "Индивидуальная сессия", "Разбор системы мышления как архитектуры — и её перенастройка.", [], "individ", "individ-sessiya", "", root),
+      card("katalog/?format=mini", "Мини-тренинг · 1–1,5 ч", "mini", "Мини-тренинги", "Групповая диагностика по одной теме: деньги, страхи, контроль, конфликты.", [], "mini", "mini", "mini", root),
+      card("katalog/?format=trening", "Тренинг · 2–3 часа", "tt", "Трансформационные тренинги", "Проработка уровня индивидуальной сессии в малой группе до 8 человек.", [], "trening", "training", "training", root)])
+    body = f'''<section class="hero"><div class="wrap">{crumbs(root, [("individualno/", "Индивидуальная работа"), (None, "Диагностика")])}
+<span class="kicker">Диагностика · <span data-diag="format">онлайн</span> · вход в работу</span>
+<h1>Диагностика: увидеть, что на самом деле управляет вашей ситуацией</h1>
+<p class="lead">За каждой повторяющейся ситуацией стоит система: убеждения, эмоциональные всплески, избегание и защиты. На диагностике вы увидите, что стоит за вашей историей, — и поймёте, какой следующий шаг нужен именно вам.</p>
+<div class="btns">{cta("diagnostika","","Диагностика","Записаться на диагностику")}<a class="btn ghost" href="{root}individualno/">Об индивидуальной работе</a></div></div></section>
+<section class="section" style="padding-top:10px"><div class="wrap layout"><div>
+{diag_block(root, True)}
+<div class="panel" style="margin-top:20px"><h2>Это для вас, если</h2>{ticks(["Ситуация повторяется, а вы не понимаете, что её запускает.", "Хочется изменений, но непонятно, с чего начать.", "Вы выбираете между индивидуальной работой, тренингом и модулем."], True)}</div>
+</div>{buybox("diagnostika","","Диагностика",[("Формат",'<span data-diag="format">онлайн</span>'),("Длительность",'<span data-diag="duration">уточняется</span>')],"Записаться на диагностику")}</div></section>
+<section class="section alt"><div class="wrap"><span class="kicker">Следующий шаг</span><h2>Куда можно пойти после диагностики</h2><div class="grid g3" style="margin-top:20px">{nxt}</div></div></section>'''
+    layout("diagnostika/", "Диагностика — вход в работу с Мариной Степановой", "Диагностика онлайн: увидеть, какие убеждения, реакции и защиты стоят за вашей ситуацией, и выбрать следующий шаг — индивидуальную сессию, тренинг или модуль.", body, "ind",
+           mcta=cta("diagnostika", "", "Диагностика", "Записаться на диагностику"))
+
 def klub():
     root = "../"
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Клуб «ЗАДОЛБАЛО!»")])}<span class="kicker">Бесплатно · Telegram</span>
@@ -640,7 +753,7 @@ def notfound():
     layout("404.html", "Страница не найдена", "Страница не найдена.", body)
 
 if __name__ == "__main__":
-    home(); catalog(); flagship(); psy(); hosts(); reviews_page(); faq_page(); klub()
+    home(); catalog(); individual(); diagnostics(); flagship(); psy(); hosts(); reviews_page(); faq_page(); klub()
     marathon_samoprinyatie(); marathon_dvizhenie(); lila()
     for m in MODULES: module_page(m)
     for s in T: training_page(s)

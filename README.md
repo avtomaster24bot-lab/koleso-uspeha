@@ -21,11 +21,16 @@
 | `photos.marina` + файл в `assets/img/` | Фото Марины |
 | `bios.marina` | Образование, опыт, сертификаты |
 | `yandexMetrikaId` | Номер счётчика Метрики |
+| `prices.individ-sessiya`, `individ-paket`, `individ-povtor` | Индивидуальная сессия, пакет, повторная сессия |
+| `prices.diagnostika`, `prices.meditacii` | Диагностика, потоковые медитации |
+| `individual.packageSize`, `individual.format` | Сколько сессий в пакете (пусто — не показывается), формат |
+| `diagnostics.duration`, `format`, `creditTowardPurchase`, `freeSpotsNote` | Длительность и формат диагностики, зачёт стоимости при покупке, строка про бесплатные места |
+| `earlyPrices`, `priceNotes` | Ранние цены и пояснения под ценой |
 
 Уже заполнено из материалов: Telegram Марины @MarinaNew; цены «Самопринятие» 3 500 ₽, «Самоценность» 7 000 ₽, «Движение к цели» 2 500 ₽, «Лила» 3 500 ₽, «Архитектор продукта» 80–150 тыс. ₽.
 
 ### Коды продуктов
-`koleso-full`, `koleso-part1`, `koleso-part2`, `modul-1`…`modul-6`, `trening-<адрес>` (напр. `trening-dengi-iz-detstva`), `mini-<адрес>` (напр. `mini-samozvanets`), `marafon-samoprinyatie`, `marafon-dvizhenie`, `igra-lila`, `trening-samotsennost`, `arhitektor-produkta`, `psy-obuchenie`.
+`koleso-full`, `koleso-part1`, `koleso-part2`, `modul-1`…`modul-6`, `trening-<адрес>` (напр. `trening-dengi-iz-detstva`), `mini-<адрес>` (напр. `mini-samozvanets`), `marafon-samoprinyatie`, `marafon-dvizhenie`, `igra-lila`, `trening-samotsennost`, `arhitektor-produkta`, `psy-obuchenie`, `individ-sessiya`, `individ-paket`, `individ-povtor`, `diagnostika`, `meditacii`.
 
 ## Тексты и отзывы
 Страницы генерируются скриптом: `python3 _src/gen.py` (тексты — `_src/data.py`, отзывы — `_src/reviews.py`). Результат — готовые HTML, сборка на хостинге не нужна.
@@ -39,6 +44,8 @@
 | Каталог тренингов | https://avtomaster24bot-lab.github.io/koleso-uspeha/katalog/ |
 | Программа «Колесо успеха» — 6 модулей, 24 тренинга | https://avtomaster24bot-lab.github.io/koleso-uspeha/koleso-uspeha/ |
 | Для психологов и коучей | https://avtomaster24bot-lab.github.io/koleso-uspeha/dlya-psihologov/ |
+| Индивидуальная работа | https://avtomaster24bot-lab.github.io/koleso-uspeha/individualno/ |
+| Диагностика | https://avtomaster24bot-lab.github.io/koleso-uspeha/diagnostika/ |
 | Ведущая: Марина Степанова | https://avtomaster24bot-lab.github.io/koleso-uspeha/vedushchie/ |
 | Отзывы участников | https://avtomaster24bot-lab.github.io/koleso-uspeha/otzyvy/ |
 | Вопросы и ответы | https://avtomaster24bot-lab.github.io/koleso-uspeha/faq/ |

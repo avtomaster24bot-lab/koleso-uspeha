@@ -28,10 +28,11 @@ p{margin:0 0 1em}
 .logo-mark{width:34px;height:34px;border-radius:50%;background:conic-gradient(var(--rose) 0 60deg,var(--sun) 0 120deg,var(--mint) 0 180deg,var(--rose) 0 240deg,var(--sun) 0 300deg,var(--sky) 0);position:relative;flex:none}
 .logo-mark:after{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--bg)}
 .nav{display:flex;gap:4px;align-items:center}
-.nav a{color:var(--ink);text-decoration:none;padding:8px 11px;border-radius:10px;font-weight:600;font-size:15px}
+.nav a{color:var(--ink);text-decoration:none;padding:8px 9px;border-radius:10px;font-weight:600;font-size:15px;white-space:nowrap}
+.logo{white-space:nowrap}
 .nav a:hover,.nav a.on{background:var(--bg2)}
 .burger{display:none;background:none;border:0;font-size:26px;cursor:pointer;color:var(--ink);padding:6px}
-@media (max-width:900px){
+@media (max-width:1100px){
   .burger{display:block}
   .nav{position:fixed;top:64px;left:0;right:0;background:var(--bg);flex-direction:column;align-items:stretch;padding:12px 20px 20px;border-bottom:1px solid var(--line);display:none;box-shadow:var(--sh)}
   .nav.open{display:flex} .nav a{padding:12px}
