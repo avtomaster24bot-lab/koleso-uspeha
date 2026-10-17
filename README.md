@@ -1,6 +1,8 @@
-# Сайт «Колесо успеха»
+# Сайт «Код счастливой жизни»
 
-Статический сайт тренингов Марины Степановой и Анны Элиа. Хостинг — GitHub Pages (ветка `main`, корень).
+Статический сайт тренингов Марины Степановой и Анны Элиа (флагманская программа — «Колесо успеха»). Репозиторий и адрес пока называются `koleso-uspeha` — их можно переименовать позже (Settings → Repository name), но тогда изменятся все ссылки в роликах.
+
+Единственный контакт для покупки — Марина, Telegram @MarinaNew. Каждая кнопка «Купить» открывает `https://t.me/MarinaNew?text=…` с готовым текстом под конкретный продукт (с ценой, если она указана, и источником из UTM-метки); текст дополнительно копируется в буфер обмена. Хостинг — GitHub Pages (ветка `main`, корень).
 
 ## Как менять цены, даты, контакты
 Всё — в одном файле **`assets/config.js`** (редактируется прямо на GitHub: открыть файл → ✏️ → Commit). Пустое значение = заглушка «Цена уточняется» / «Дата уточняется».
@@ -14,13 +16,13 @@
 | `dates.*` | Ближайшие даты групп по коду продукта |
 | `defaultTrainingDuration` | Длительность трансформационного тренинга |
 | `paymentLinks.*` | Ссылки на оплату (если есть) |
-| `contacts.whatsapp/email/phone/formUrl` | Доп. контакты (необязательно) |
+| `contacts.whatsapp` | WhatsApp Марины (необязательно, появится в подвале) |
 | `contacts.channelUrl`, `contacts.clubUrl` | Публичные ссылки на канал и чат «ЗАДОЛБАЛО!» |
 | `photos.marina/anna` + файлы в `assets/img/` | Фото ведущих |
 | `bios.marina/anna` | Образование, опыт, сертификаты |
 | `yandexMetrikaId` | Номер счётчика Метрики |
 
-Уже заполнено из материалов: Telegram @MarinaNew и @AnnaElia1; цены «Самопринятие» 3 500 ₽, «Самоценность» 7 000 ₽, «Движение к цели» 2 500 ₽, «Лила» 3 500 ₽, «Архитектор продукта» 80–150 тыс. ₽.
+Уже заполнено из материалов: Telegram Марины @MarinaNew; цены «Самопринятие» 3 500 ₽, «Самоценность» 7 000 ₽, «Движение к цели» 2 500 ₽, «Лила» 3 500 ₽, «Архитектор продукта» 80–150 тыс. ₽.
 
 ### Коды продуктов
 `koleso-full`, `koleso-part1`, `koleso-part2`, `modul-1`…`modul-6`, `trening-<адрес>` (напр. `trening-dengi-iz-detstva`), `mini-<адрес>` (напр. `mini-samozvanets`), `marafon-samoprinyatie`, `marafon-dvizhenie`, `igra-lila`, `trening-samotsennost`, `arhitektor-produkta`, `psy-obuchenie`.
@@ -33,7 +35,7 @@
 ## Страницы
 | Страница | Адрес |
 |---|---|
-| Колесо успеха — трансформационные тренинги Марины Степановой и Анны Элиа | https://avtomaster24bot-lab.github.io/koleso-uspeha/ |
+| Код счастливой жизни — трансформационные тренинги Марины Степановой и Анны Элиа | https://avtomaster24bot-lab.github.io/koleso-uspeha/ |
 | Каталог тренингов | https://avtomaster24bot-lab.github.io/koleso-uspeha/katalog/ |
 | Программа «Колесо успеха» — 6 модулей, 24 тренинга | https://avtomaster24bot-lab.github.io/koleso-uspeha/koleso-uspeha/ |
 | Для психологов и коучей | https://avtomaster24bot-lab.github.io/koleso-uspeha/dlya-psihologov/ |

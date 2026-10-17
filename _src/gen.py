@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Генератор статического сайта «Колесо успеха». Запуск из корня репозитория: python3 _src/gen.py"""
+"""Генератор статического сайта «Код счастливой жизни». Запуск из корня репозитория: python3 _src/gen.py"""
 import os, html, json
 from data import TOPICS, FORMATS, MODULES, T, MINIS
 from reviews import R, HOME
 
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # корень сайта (папка над _src)
 SITE = "https://avtomaster24bot-lab.github.io/koleso-uspeha/"
-BRAND = "Колесо успеха"
+BRAND = "Код счастливой жизни"
+MARINA_TG = "https://t.me/MarinaNew"
 HOSTS = "Марина Степанова и Анна Элиа"
 e = html.escape
 TOPIC = dict(TOPICS); FORMAT = dict(FORMATS)
@@ -24,8 +25,50 @@ def nav(root, active):
              ("dlya-psihologov/", "Психологам", "psy"), ("vedushchie/", "Ведущие", "hosts"), ("otzyvy/", "Отзывы", "rev"), ("faq/", "Вопросы", "faq")]
     return "".join('<a href="%s%s"%s>%s</a>' % (root, u, ' class="on"' if k == active else "", t) for u, t, k in items)
 
-def cta(code, group, title, label="Записаться", cls="btn"):
-    return '<a href="#zapis" class="%s" data-cta="%s" data-group="%s" data-title="%s">%s</a>' % (cls, code, group, e(title, quote=True), label)
+from urllib.parse import quote as _q
+PROG_VARIANT = {"koleso-full": "полная программа (6 месяцев, 24 тренинга)",
+                "koleso-part1": "Часть 1 «Внутренняя опора» (модули 1–3, 3 месяца)",
+                "koleso-part2": "Часть 2 «Проявленность и масштаб» (модули 4–6, 3 месяца)"}
+TAIL = "Подскажите, как оплатить и ближайшую дату."
+def msg_for(code, title):
+    """(head, tail, with_price) — текст сообщения Марине под конкретный продукт."""
+    hi = "Здравствуйте, Марина! "
+    if code in PROG_VARIANT:
+        return hi + "Хочу купить программу «Колесо успеха» — вариант: %s." % PROG_VARIANT[code], TAIL, True
+    if code.startswith("modul-"):
+        m = MOD[int(code.split("-")[1])]
+        return hi + "Хочу купить модуль %d «%s» программы «Колесо успеха» (1 месяц, 4 тренинга)." % (m["n"], m["title"]), TAIL, True
+    if code.startswith("trening-"):
+        t = T[code[8:]]
+        mod = (" (модуль «%s»)" % MOD[t["module"]]["title"]) if t["module"] else ""
+        return hi + "Хочу купить тренинг «%s»%s." % (t["title"], mod), TAIL, True
+    if code.startswith("mini-"):
+        return hi + "Хочу купить мини-тренинг «%s» (1–1,5 часа, онлайн)." % MINI[code[5:]]["title"], TAIL, True
+    if code == "marafon-samoprinyatie":
+        return hi + "Хочу участвовать в марафоне «Самопринятие» (5 недель).", TAIL + "", True
+    if code == "marafon-dvizhenie":
+        return hi + "ХОЧУ В ДВИЖЕНИЕ — участвовать в марафоне «Движение к цели» (14 дней).", "Подскажите, как оплатить и когда старт.", True
+    if code == "igra-lila":
+        return hi + "Хочу записаться на игру «Лила» (4 часа, онлайн).", TAIL, True
+    if code == "arhitektor-produkta":
+        return hi + "Хочу обсудить наставничество «Архитектор продукта» для своего проекта.", "Расскажите, пожалуйста, как проходит работа и как оплатить.", True
+    if code == "psy-obuchenie":
+        return hi + "Хочу встать в лист ожидания на обучение ведению Т-игр и групп с МАК.", "Сообщите, пожалуйста, когда откроется набор.", False
+    if code == "klub":
+        return hi + "Хочу вступить в клуб «ЗАДОЛБАЛО!».", "Пришлите, пожалуйста, ссылку для входа.", False
+    if code == "podbor":
+        return hi + "Хочу подобрать тренинг под свой запрос.", "Подскажите, с чего лучше начать и ближайшие даты.", False
+    if code == "vopros":
+        return hi + "У меня вопрос о тренингах.", "", False
+    return hi + "Хочу купить: «%s»." % title, TAIL, True
+
+def tg_link(text): return MARINA_TG + "?text=" + _q(text, safe="")
+
+def cta(code, group, title, label="Купить", cls="btn"):
+    head, tail, wp = msg_for(code, title)
+    static = (head + " " + tail).strip()
+    return ('<a href="%s" class="%s" target="_blank" rel="noopener" data-cta="%s" data-group="%s" data-head="%s" data-tail="%s"%s>%s</a>'
+            % (e(tg_link(static), quote=True), cls, code, group, e(head, quote=True), e(tail, quote=True), "" if wp else " data-noprice", label))
 
 def price_span(code, group): return '<span data-price="%s" data-group="%s">Цена уточняется</span>' % (code, group)
 def date_span(code, group): return '<span data-date="%s" data-group="%s">Дата уточняется</span>' % (code, group)
@@ -39,23 +82,7 @@ def rev_html(key, label=None, limit=None):
         out.append('<blockquote class="rev"><p>%s</p><cite>%s</cite></blockquote>' % (e(txt), e(sig or label or "Участница")))
     return "".join(out)
 
-MODAL = '''<div class="modal" id="cta-modal" role="dialog" aria-modal="true" aria-labelledby="m-t"><div class="mbox">
-<button class="mclose" aria-label="Закрыть">×</button>
-<span class="kicker">Запись</span><h3 id="m-t" data-m-title></h3>
-<p class="small muted" style="margin:0">Стоимость: <b data-m-price></b> · Ближайшая дата: <b data-m-date></b></p>
-<a class="btn hidden" data-m-pay target="_blank" rel="noopener">Оплатить</a>
-<p class="small" style="margin-top:14px" data-m-paynote></p>
-<p class="small muted" style="margin:0">Текст для сообщения (скопируется автоматически):</p>
-<div class="codebox" data-m-msg></div>
-<a class="btn" data-m-marina target="_blank" rel="noopener">Написать Марине в Telegram</a>
-<a class="btn ghost" data-m-anna target="_blank" rel="noopener">Написать Анне в Telegram</a>
-<a class="btn ghost hidden" data-m-wa target="_blank" rel="noopener">Написать в WhatsApp</a>
-<a class="btn ghost hidden" data-m-form target="_blank" rel="noopener">Оставить заявку через форму</a>
-<a class="btn ghost hidden" data-m-email>Написать на e-mail</a>
-<button class="btn ghost" data-m-copy type="button">Скопировать текст</button>
-<p class="ok"></p>
-<p class="small muted">Все тренинги проходят онлайн и только вживую — в группе с ведущими.</p>
-</div></div>'''
+MODAL = '<div class="toast" id="toast" role="status" aria-live="polite"></div>'
 
 def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=None):
     depth = path.count("/")
@@ -91,7 +118,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <div><h4>{BRAND}</h4><p>Трансформационные тренинги, мини-тренинги и Т-игры. Онлайн, в живой группе.<br>Ведущие: {HOSTS}.</p></div>
 <div><h4>Тренинги</h4><ul><li><a href="{root}katalog/">Все тренинги</a></li><li><a href="{root}koleso-uspeha/">Программа «Колесо успеха»</a></li><li><a href="{root}katalog/?format=mini">Мини-тренинги</a></li><li><a href="{root}igra/lila/">Игра «Лила»</a></li></ul></div>
 <div><h4>Ещё</h4><ul><li><a href="{root}dlya-psihologov/">Для психологов и коучей</a></li><li><a href="{root}klub/">Клуб «ЗАДОЛБАЛО!»</a></li><li><a href="{root}otzyvy/">Отзывы</a></li><li><a href="{root}faq/">Вопросы и ответы</a></li></ul></div>
-<div><h4>Связаться</h4><ul><li><a href="https://t.me/MarinaNew" data-link="marinaTelegram" target="_blank" rel="noopener">Марина — Telegram</a></li><li><a href="https://t.me/AnnaElia1" data-link="annaTelegram" target="_blank" rel="noopener">Анна — Telegram</a></li><li><a class="hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Telegram-канал</a></li><li><a class="hidden" data-link="vkUrl" data-hide-empty target="_blank" rel="noopener">ВКонтакте</a></li><li><a class="hidden" data-link="youtubeUrl" data-hide-empty target="_blank" rel="noopener">YouTube</a></li></ul></div>
+<div><h4>Связаться</h4><ul><li><a href="https://t.me/MarinaNew" data-link="marinaTelegram" target="_blank" rel="noopener">Марина Степанова — Telegram @MarinaNew</a></li><li><a class="hidden" data-link="whatsapp" data-hide-empty target="_blank" rel="noopener">WhatsApp</a></li><li><a class="hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Telegram-канал</a></li><li><a class="hidden" data-link="vkUrl" data-hide-empty target="_blank" rel="noopener">ВКонтакте</a></li><li><a class="hidden" data-link="youtubeUrl" data-hide-empty target="_blank" rel="noopener">YouTube</a></li></ul></div>
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
@@ -134,11 +161,11 @@ def all_cards(root):
     out.append(card("igra/lila/", "Т-игра · 4 часа", "game", "Игра «Лила» — авторская версия", "Найти самую важную точку развития и скрытые сценарии.", ["celi", "strahi", "dengi"], "igra", "igra-lila", "", root))
     return "".join(out)
 
-def buybox(code, group, title, rows, label="Записаться"):
+def buybox(code, group, title, rows, label="Купить — написать Марине"):
     dl = "".join("<dt>%s</dt><dd>%s</dd>" % (k, v) for k, v in rows)
     return ('<aside class="buy"><div class="small muted">Стоимость</div><div class="p">%s</div><dl><dt>Старт</dt><dd>%s</dd>%s</dl>%s'
-            '<p class="small muted" style="margin:12px 0 0">Нажмите — откроется окно записи с контактами ведущих.</p></aside>') % (
-        price_span(code, group), date_span(code, group), dl, cta(code, group, title, label))
+            '<p class="small muted" style="margin:12px 0 0">Откроется Telegram Марины с готовым сообщением. Текст также копируется — если он не подставился, просто вставьте его в чат.</p></aside>') % (
+        price_span(code, group), date_span(code, group), dl, cta(code, group, title, label) + '<a class="btn ghost hidden" style="width:100%%;margin-top:10px" data-pay="%s" target="_blank" rel="noopener">Оплатить онлайн</a>' % code)
 
 # ------------------------------------------------------------------ HOME
 def home():
@@ -156,7 +183,7 @@ def home():
     body = f'''
 <section class="hero"><div class="wrap">
 <span class="kicker">Онлайн · живые группы · авторские тренинги</span>
-<h1>Колесо успеха: убери внутренние тормоза — и деньги, цели и отношения сдвинутся</h1>
+<h1>Код счастливой жизни: убери внутренние тормоза — и деньги, цели и отношения сдвинутся</h1>
 <p class="lead">Трансформационные тренинги, мини-тренинги и Т-игры для предпринимателей, экспертов, руководителей и всех, кто хочет большего. Ведущие — {HOSTS}.</p>
 <div class="btns"><a class="btn" href="katalog/">Подобрать тренинг</a><a class="btn ghost" href="koleso-uspeha/">Программа на 6 месяцев</a></div>
 <div class="meta"><span class="chip c1">Деньги</span><span class="chip c2">Страхи</span><span class="chip c3">Контроль и лидерство</span><span class="chip c1">Конфликты</span><span class="chip c2">Проявленность</span><span class="chip c4">Цели</span></div>
@@ -218,7 +245,7 @@ def home():
 <h2>Не знаете, с чего начать?</h2><p>Напишите нам — подскажем тренинг под ваш запрос и ближайшую дату.</p>
 <div class="btns" style="justify-content:center">{cta("podbor","","Подбор тренинга","Подобрать тренинг","btn light")}<a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 2px #fff" href="faq/">Частые вопросы</a></div>
 </div></div></section>'''
-    layout("", "Колесо успеха — трансформационные тренинги Марины Степановой и Анны Элиа",
+    layout("", "Код счастливой жизни — трансформационные тренинги Марины Степановой и Анны Элиа",
            "Онлайн-тренинги, мини-тренинги и Т-игры: деньги, страхи, контроль, конфликты, проявленность и цели. Программа «Колесо успеха» — 6 модулей. Живые группы.",
            body, "home", mcta=cta("podbor", "", "Подбор тренинга", "Подобрать тренинг"))
 
@@ -302,7 +329,7 @@ def training_page(s):
         start = ('<p class="muted">Хотите сначала попробовать формат? Начните с мини-тренинга <a href="%s%s">«%s»</a> (1–1,5 часа).</p>' % (root, miniurl(mm["slug"]), e(mm["title"]))) if mm else ""
         nxt = f'''<section class="section"><div class="wrap"><span class="kicker">Выгоднее и глубже</span><h2>Тренинг входит в модуль «{e(mod["title"])}»</h2>
 <p class="lead">Пройдите все 4 тренинга модуля за месяц — тема прорабатывается комплексно.</p>{start}
-<div class="btns">{cta("modul-%d" % mod["n"], "module", "Модуль %d «%s»" % (mod["n"], mod["title"]), "Записаться на весь модуль")}<a class="btn ghost" href="{root}{murl(mod)}">О модуле</a><a class="btn ghost" href="{root}koleso-uspeha/">Вся программа</a></div>
+<div class="btns">{cta("modul-%d" % mod["n"], "module", "Модуль %d «%s»" % (mod["n"], mod["title"]), "Купить весь модуль")}<a class="btn ghost" href="{root}{murl(mod)}">О модуле</a><a class="btn ghost" href="{root}koleso-uspeha/">Вся программа</a></div>
 <h3 style="margin-top:30px">Другие тренинги модуля</h3><div class="grid g3">{sib}</div></div></section>'''
     else:
         nxt = f'''<section class="section"><div class="wrap"><h2>Начните с марафона</h2><p class="lead">Тренинг «Самоценность» — продолжение марафона «Самопринятие».</p><div class="btns"><a class="btn ghost" href="{root}marafon/samoprinyatie/">Марафон «Самопринятие»</a></div></div></section>'''
@@ -339,10 +366,10 @@ def module_page(m):
 <span class="kicker">Модуль {m["n"]} из 6 · 1 месяц · 4 трансформационных тренинга · онлайн</span>
 <h1>{e(m["title"])}</h1><p class="lead">{e(m["intro"])}</p>
 <div class="meta"><span class="chip c{(m["n"]-1)%4+1}">Цель модуля: {e(m["goal"])}</span></div>
-<div class="btns">{cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Записаться на модуль")}<a class="btn ghost" href="#program">Программа модуля</a></div></div></section>
+<div class="btns">{cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Купить модуль")}<a class="btn ghost" href="#program">Программа модуля</a></div></div></section>
 <section class="section" id="program" style="padding-top:10px"><div class="wrap layout"><div>
 <h2>4 тренинга модуля</h2><div class="grid" style="margin-top:16px">{items}</div>
-</div>{buybox(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), [("Формат", "онлайн, живая группа"), ("Длительность", "1 месяц"), ("Тренингов", "4")], "Записаться на модуль")}</div></section>
+</div>{buybox(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), [("Формат", "онлайн, живая группа"), ("Длительность", "1 месяц"), ("Тренингов", "4")], "Купить модуль")}</div></section>
 <section class="section alt"><div class="wrap"><h2>Отзывы участников</h2><div class="revs" style="margin-top:18px">{revs}</div></div></section>
 <section class="section"><div class="wrap"><span class="kicker">Варианты участия</span><h2>Как можно пройти эту тему</h2>
 <div class="tiers" style="margin-top:20px">
@@ -351,7 +378,7 @@ def module_page(m):
 <div class="tier best"><h3>{e(partname)}</h3><p class="muted">3 месяца, 12 тренингов. Этот модуль — внутри.</p><div class="p">{price_span(part,"")}</div>{cta(part, "", partname)}</div>
 </div><div class="btns">{pn}<a class="btn ghost sm" href="{root}koleso-uspeha/">Вся программа</a></div></div></section>'''
     layout(murl(m), "Модуль %d «%s»" % (m["n"], m["title"]), "%s Модуль программы «Колесо успеха»: 1 месяц, 4 тренинга онлайн." % m["intro"][:140], body, "prog",
-           mcta=cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Записаться на модуль"))
+           mcta=cta(code, "module", "Модуль %d «%s»" % (m["n"], m["title"]), "Купить модуль"))
 
 # ------------------------------------------------------------------ FLAGSHIP
 def flagship():
@@ -377,7 +404,7 @@ def flagship():
 <span class="kicker">Флагманская программа · 6 модулей · 24 тренинга · онлайн</span>
 <h1>Колесо успеха</h1>
 <p class="lead">6 модулей по 1 месяцу. Каждый — 4 трансформационных тренинга, которые ведут из точки А в точку Б: от осознания денежных ограничений и освобождения от страхов — к проявленности, системности и масштабу.</p>
-<div class="btns">{cta("koleso-full", "", "Программа «Колесо успеха» — 6 месяцев", "Записаться на программу")}<a class="btn ghost" href="#tiers">Сравнить форматы участия</a></div>
+<div class="btns">{cta("koleso-full", "", "Программа «Колесо успеха» — 6 месяцев", "Купить программу")}<a class="btn ghost" href="#tiers">Сравнить форматы участия</a></div>
 <div class="meta"><span class="chip">Ведущие: {HOSTS}</span><span class="chip">Старт: {date_span("koleso-full","")}</span></div></div></section>
 
 <section class="section alt"><div class="wrap"><span class="kicker">Путь по колесу</span><h2>6 модулей = 6 сфер</h2>
@@ -400,10 +427,10 @@ def flagship():
 
 <section class="section"><div class="wrap"><h2>Отзывы участников модулей</h2><div class="revs" style="margin-top:18px">{allrev}</div><div class="btns"><a class="btn ghost" href="{root}otzyvy/">Все отзывы</a></div></div></section>
 <section class="section alt"><div class="wrap"><h2>Вопросы о программе</h2>{faq}</div></section>
-<section class="section"><div class="wrap"><div class="band"><h2>Готовы прокрутить своё колесо?</h2><p>Напишите — расскажем о ближайшем потоке и поможем выбрать формат.</p><div class="btns" style="justify-content:center">{cta("koleso-full","","Программа «Колесо успеха»","Записаться","btn light")}</div></div></div></section>'''
+<section class="section"><div class="wrap"><div class="band"><h2>Готовы прокрутить своё колесо?</h2><p>Напишите — расскажем о ближайшем потоке и поможем выбрать формат.</p><div class="btns" style="justify-content:center">{cta("koleso-full","","Программа «Колесо успеха»","Купить программу","btn light")}</div></div></div></section>'''
     layout("koleso-uspeha/", "Программа «Колесо успеха» — 6 модулей, 24 тренинга",
            "Флагманская программа: 6 модулей по месяцу — деньги, страхи, ограничения, проявленность, ритм, цели. Полностью, частями по 3 месяца или по модулям. Онлайн, вживую.",
-           body, "prog", mcta=cta("koleso-full", "", "Программа «Колесо успеха»", "Записаться на программу"))
+           body, "prog", mcta=cta("koleso-full", "", "Программа «Колесо успеха»", "Купить программу"))
 
 def faq_items(items):
     return "".join("<details><summary>%s</summary><div>%s</div></details>" % (e(q), a) for q, a in items)
@@ -422,14 +449,14 @@ def psy():
 <span class="kicker">Для начинающих и практикующих специалистов</span>
 <h1>Для психологов, коучей и экспертов помогающих профессий</h1>
 <p class="lead">Этот раздел — отдельно от клиентских тренингов. Здесь — то, что полезно вам как специалисту: создание своего глубокого продукта, личная проработка профессиональных «тормозов» и возможность увидеть формат Т-игр и групповой работы с МАК-картами изнутри.</p>
-<div class="btns">{cta("arhitektor-produkta","","Наставничество «Архитектор продукта»","Обсудить свой продукт")}<a class="btn ghost" href="#personal">Личная проработка</a></div></div></section>
+<div class="btns">{cta("arhitektor-produkta","","Наставничество «Архитектор продукта»","Обсудить с Мариной")}<a class="btn ghost" href="#personal">Личная проработка</a></div></div></section>
 
 <section class="section" style="padding-top:10px"><div class="wrap layout"><div>
 <div class="panel"><span class="kicker">Премиум · индивидуально</span><h2>«Архитектор продукта»: наставничество по созданию трансформационных игр и программ</h2>
 <p>Для психологов, коучей и экспертов, которые хотят создать свой глубокий продукт, но не знают, как выстроить методологию и механику.</p>
 <h3>Что входит</h3>{ticks(["Диагностика вашего текущего продукта или идеи.", "Помощь в создании структуры: от запроса — до механики.", "Присутствие на тестовом проведении с обратной связью.", "Рекомендации по упаковке и воронке: как продавать этот продукт."])}
 <p style="margin-top:14px"><b>Формат:</b> индивидуальное сопровождение в течение 1–2 месяцев.</p></div>
-</div>{buybox("arhitektor-produkta","","Наставничество «Архитектор продукта»",[("Формат","индивидуально, онлайн"),("Срок","1–2 месяца")],"Обсудить проект")}</div></section>
+</div>{buybox("arhitektor-produkta","","Наставничество «Архитектор продукта»",[("Формат","индивидуально, онлайн"),("Срок","1–2 месяца")],"Обсудить проект с Мариной")}</div></section>
 
 <section class="section alt" id="personal"><div class="wrap"><span class="kicker">Личная работа специалиста</span><h2>Тренинги, которые особенно откликаются специалистам</h2>
 <p class="lead">Самозванец, цена своей услуги, «спасательство» — частые профессиональные тормоза помогающих специалистов. Вы проходите тренинг как участник, для себя.</p>
@@ -453,7 +480,7 @@ def psy():
 ("Можно ли использовать ваши игры в своей практике?", "Авторские игры и тренинги принадлежат авторам. Если вы хотите создать свой продукт — для этого и существует «Архитектор продукта»."),
 ])}</div></section>'''
     layout("dlya-psihologov/", "Для психологов и коучей", "Наставничество «Архитектор продукта» для психологов, коучей и экспертов: создание своей трансформационной игры или программы. Личная проработка специалиста.", body, "psy",
-           mcta=cta("arhitektor-produkta", "", "Наставничество «Архитектор продукта»", "Обсудить свой продукт"))
+           mcta=cta("arhitektor-produkta", "", "Наставничество «Архитектор продукта»", "Обсудить с Мариной"))
 
 # ------------------------------------------------------------------ OTHER
 def hosts():
@@ -461,8 +488,8 @@ def hosts():
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Ведущие")])}<span class="kicker">Авторы и ведущие</span><h1>Марина Степанова и Анна Элиа</h1>
 <p class="lead">Авторы программы «Колесо успеха», трансформационных тренингов и авторской версии игры «Лила». Ведут вдвоём — участники часто называют это «слаженным тандемом».</p></div></section>
 <section class="section" style="padding-top:10px"><div class="wrap grid g2">
-<div class="panel"><div class="host"><div class="ph" data-photo="marina" data-root="{root}">МС</div><div><h2>Марина Степанова</h2><p>Автор и ведущая Т-игр и тренингов, предприниматель с опытом 9 лет.</p><p class="hidden" data-bio="marina"></p><a class="btn sm" href="https://t.me/MarinaNew" target="_blank" rel="noopener">Telegram @MarinaNew</a></div></div></div>
-<div class="panel"><div class="host"><div class="ph" data-photo="anna" data-root="{root}" style="background:linear-gradient(135deg,var(--mint),var(--sky))">АЭ</div><div><h2>Анна Элиа</h2><p>Автор, ведущая групповых практик и Т-игр.</p><p class="hidden" data-bio="anna"></p><a class="btn sm" href="https://t.me/AnnaElia1" target="_blank" rel="noopener">Telegram @AnnaElia1</a></div></div></div>
+<div class="panel"><div class="host"><div class="ph" data-photo="marina" data-root="{root}">МС</div><div><h2>Марина Степанова</h2><p>Автор и ведущая Т-игр и тренингов, предприниматель с опытом 9 лет.</p><p class="hidden" data-bio="marina"></p>{cta("vopros","","Вопрос Марине","Написать Марине в Telegram","btn sm")}</div></div></div>
+<div class="panel"><div class="host"><div class="ph" data-photo="anna" data-root="{root}" style="background:linear-gradient(135deg,var(--mint),var(--sky))">АЭ</div><div><h2>Анна Элиа</h2><p>Автор, ведущая групповых практик и Т-игр.</p><p class="hidden" data-bio="anna"></p></div></div></div>
 </div></section>
 <section class="section alt"><div class="wrap"><h2>Как участники говорят о работе ведущих</h2><div class="revs" style="margin-top:18px">
 <blockquote class="rev"><p>{e(R["lider-a-ne-nyanka"][1][0])}</p><cite>Участница тренинга «Лидер, а не нянька!»</cite></blockquote>
@@ -501,7 +528,7 @@ FAQ_MAIN = [
  ("С чего лучше начать?", "С мини-тренинга на 1–1,5 часа по теме, которая откликается сильнее всего. Он показывает, что именно тормозит. Глубокая трансформация — в полном тренинге, модуле или программе."),
  ("Можно купить один тренинг или один модуль?", "Да. Каждый тренинг и каждый модуль можно пройти отдельно. Программу «Колесо успеха» можно пройти целиком (6 месяцев) или частями по 3 месяца."),
  ("Я не предприниматель. Мне подойдёт?", "Да. Тренинги для предпринимателей, экспертов, фрилансеров, руководителей и тех, кто работает в найме. Масштаб у каждого свой — и переход на новый уровень в работе тоже рост."),
- ("Как записаться и оплатить?", "Нажмите «Записаться» на странице тренинга и напишите ведущим в Telegram — мы пришлём ближайшую дату и детали для оплаты."),
+ ("Как записаться и оплатить?", "Нажмите «Купить» на странице тренинга — откроется Telegram Марины (@MarinaNew) с готовым сообщением. Марина пришлёт ближайшую дату и детали для оплаты."),
  ("Это психотерапия?", "Нет. Это групповая трансформационная работа: тренинги и игры. Она не заменяет медицинскую или психиатрическую помощь. Если вы в остром состоянии — пожалуйста, обратитесь к врачу."),
  ("Я психолог. Есть что-то для специалистов?", 'Да, смотрите <a href="../dlya-psihologov/">раздел для психологов и коучей</a>.'),
 ]
@@ -509,7 +536,7 @@ def faq_page():
     root = "../"
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Вопросы и ответы")])}<span class="kicker">FAQ</span><h1>Вопросы и ответы</h1></div></section>
 <section class="section" style="padding-top:0"><div class="wrap">{faq_items(FAQ_MAIN)}
-<div class="band" style="margin-top:30px"><h2>Остался вопрос?</h2><p>Напишите ведущим — ответим лично.</p><div class="btns" style="justify-content:center">{cta("vopros","","Вопрос ведущим","Задать вопрос","btn light")}</div></div></div></section>'''
+<div class="band" style="margin-top:30px"><h2>Остался вопрос?</h2><p>Напишите Марине — ответим лично.</p><div class="btns" style="justify-content:center">{cta("vopros","","Вопрос ведущим","Задать вопрос","btn light")}</div></div></div></section>'''
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ_MAIN]}
     layout("faq/", "Вопросы и ответы", "Как проходят тренинги, есть ли записи, с чего начать, как записаться и оплатить.", body, "faq", jsonld=ld)
 
@@ -538,7 +565,7 @@ def marathon_dvizhenie():
 <div class="panel" style="margin-top:20px"><h2>Вместе мы</h2>{ticks(["Найдём настоящую цель — не навязанную, а живую, от которой мурашки.", "Разложим её на понятные и реальные шаги.", "Отследим, что мешает — внутренне и внешне.", "Создадим устойчивый фокус и лёгкий темп — без перегруза и самоедства."])}
 <div class="note">С тобой будут два опытных коуча, обратная связь и пространство, где никто не давит — но всё работает.</div></div>
 <div class="panel" style="margin-top:20px"><h2>Подходит, если</h2>{ticks(["Хочешь двинуться с мёртвой точки.", "Давно «в подготовке», но не в реализации.", "Теряешь себя в суете и хочешь фокус.", "Хочешь выдохнуть, понять себя и почувствовать реальное движение."], True)}
-<p style="margin-top:12px">Чтобы записаться, напиши в личку <b>@AnnaElia1</b> или <b>@MarinaNew</b>: «ХОЧУ В ДВИЖЕНИЕ» — и мы пришлём детали для оплаты.</p></div>
+<p style="margin-top:12px">Чтобы записаться, напиши Марине в Telegram <b>@MarinaNew</b>: «ХОЧУ В ДВИЖЕНИЕ» — и мы пришлём детали для оплаты. Кнопка «Купить» подставит этот текст сама.</p></div>
 </div>{buybox(code,"",title,[("Формат","Telegram + 3 живых эфира"),("Длительность","14 дней, 8 шагов")])}</div></section>
 <section class="section alt"><div class="wrap"><h2>Хотите глубже?</h2><p class="lead">Модуль «Квантовый скачок от мечты к цели» — 4 трансформационных тренинга за месяц.</p><div class="btns"><a class="btn ghost" href="{root}{murl(MOD[6])}">О модуле 6</a></div></div></section>'''
     layout("marafon/dvizhenie-k-celi/", title + " — 14 дней", "14 дней, 8 шагов, 3 живых эфира и поддержка коучей: найти живую цель, разложить на шаги и двинуться с мёртвой точки.", body, "cat", mcta=cta(code, "", title))
@@ -548,21 +575,21 @@ def lila():
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [("katalog/?format=igra", "Игры"), (None, "Лила")])}
 <span class="kicker">Трансформационная игра · 4 часа · 4 участника · онлайн</span><h1>Игра «Лила»</h1>
 <p class="lead">Авторская версия Марины Степановой и Анны Элиа, переработанная для бизнеса и общих ситуаций (на основе версии Хариша Джохари «Джняна Чаупада»). Ваш бизнес, отношения или карьера развиваются не так, как хотелось бы? Возможно, мешают невидимые ограничения в мышлении и стратегиях.</p>
-<div class="btns">{cta(code,"",title,"Записаться на игру")}</div></div></section>
+<div class="btns">{cta(code,"",title,"Записаться и оплатить")}</div></div></section>
 <section class="section" style="padding-top:10px"><div class="wrap layout"><div>
 <div class="panel"><h2>Эта игра для вас, если</h2>{ticks(["Бизнес застрял на одном уровне, и вы не понимаете, в чём причина.", "Вы упускаете возможности для роста, но боитесь рисковать.", "Сложно масштабироваться, делегировать или привлекать новые ресурсы.", "Бизнес приносит стресс, а не удовольствие.", "Внутренние страхи и сомнения мешают принимать смелые решения."], True)}</div>
 <div class="panel" style="margin-top:20px"><h2>В процессе игры вы</h2>{ticks(["Найдёте самую важную точку развития.", "Увидите скрытые сценарии, которые управляют вашей жизнью.", "Поймёте, какие стратегии ведут к успеху, а какие тормозят рост.", "Найдёте внутренние ресурсы и новые решения.", "Получите практические инсайты, которые сможете применить сразу."])}
 <div class="note">«Лила» — не просто игра, а глубокий инструмент осознания. Она покажет, где ваши сильные и слабые стороны, какие решения ведут к процветанию, а какие — в тупик.</div></div>
-</div>{buybox(code,"",title,[("Формат","онлайн"),("Длительность","4 часа"),("Участников","4")],"Записаться на игру")}</div></section>
+</div>{buybox(code,"",title,[("Формат","онлайн"),("Длительность","4 часа"),("Участников","4")],"Записаться и оплатить")}</div></section>
 <section class="section alt"><div class="wrap"><h2>Отзывы игроков</h2><div class="revs" style="margin-top:18px">{rev_html("igra-lila","Участница игры «Лила»")}</div></div></section>'''
-    layout("igra/lila/", "Игра «Лила» — авторская трансформационная игра", "Авторская версия «Лилы» для бизнеса и жизненных ситуаций: 4 часа, 4 участника, онлайн. Найти точку развития и скрытые сценарии.", body, "cat", mcta=cta(code, "", title, "Записаться на игру"))
+    layout("igra/lila/", "Игра «Лила» — авторская трансформационная игра", "Авторская версия «Лилы» для бизнеса и жизненных ситуаций: 4 часа, 4 участника, онлайн. Найти точку развития и скрытые сценарии.", body, "cat", mcta=cta(code, "", title, "Записаться и оплатить"))
 
 def klub():
     root = "../"
     body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Клуб «ЗАДОЛБАЛО!»")])}<span class="kicker">Бесплатно · Telegram</span>
 <h1>Клуб живых предпринимателей «ЗАДОЛБАЛО!»</h1>
 <p class="lead">Здесь ты без масок! Расскажи, что бесит в бизнесе, поделись, что накипело, — и получи рекомендацию, как с этим разобраться, от проекта психологической поддержки предпринимателей. Выдохнул — и пошёл чинить.</p>
-<div class="btns"><a class="btn" href="https://t.me/MarinaNew" data-link="clubUrl" target="_blank" rel="noopener">Вступить в клуб</a><a class="btn ghost hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Канал «Колесо успеха»</a></div></div></section>
+<div class="btns">{cta("klub","","Клуб «ЗАДОЛБАЛО!»","Вступить в клуб")}<a class="btn ghost hidden" data-link="clubUrl" data-hide-empty target="_blank" rel="noopener">Открыть чат клуба</a><a class="btn ghost hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Канал «Колесо успеха»</a></div></div></section>
 <section class="section" style="padding-top:10px"><div class="wrap two">
 <div class="panel"><h2>Здесь можно</h2>{ticks(["Высказывать всё, что накипело в работе: сотрудники и подрядчики, налоги, операционка, рабочие ситуации.", "Обсуждать сложности и «затыки» среди равных и понимающих.", "Получить поддерживающую обратную связь на свой вопрос (в области психологии и коучинга).", "Участвовать в эфирах и мероприятиях клуба."])}</div>
 <div class="panel"><h2>Здесь нельзя</h2>{ticks(["Проявлять неуважение к организаторам и участникам.", "Осуждать за слабость и насмехаться над сложностями других.", "Оставлять ссылки."], True)}<p class="small muted" style="margin-top:12px">Мы сохраняем поддерживающую атмосферу.</p></div>
