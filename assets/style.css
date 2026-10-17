@@ -184,3 +184,4 @@ details>div{padding:0 0 18px;color:#4a3f38}
 .tier .tag{align-self:flex-start;margin-bottom:10px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#2b2420;color:#fff;padding:14px 18px;border-radius:14px;font-size:14px;max-width:92vw;width:440px;z-index:120;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--sh)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.codebox{white-space:pre-line}

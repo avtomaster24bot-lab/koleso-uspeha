@@ -28,7 +28,7 @@
   document.querySelectorAll("[data-link]").forEach(function(el){
     var u = K[el.dataset.link]; if(u){ el.href = u; el.classList.remove("hidden"); } else if(el.dataset.hideEmpty!==undefined){ el.classList.add("hidden"); }
   });
-  ["marina","anna"].forEach(function(h){
+  ["marina"].forEach(function(h){
     var ph = (C.photos||{})[h], bio = (C.bios||{})[h];
     document.querySelectorAll('[data-photo="'+h+'"]').forEach(function(el){
       if(ph){ var root = el.dataset.root||""; el.innerHTML = '<img src="'+root+ph+'" alt="" loading="lazy">'; }
