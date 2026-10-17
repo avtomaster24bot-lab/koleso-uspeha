@@ -106,7 +106,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v=2">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -122,7 +122,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 </div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js"></script><script src="{root}assets/app.js"></script>
+<script src="{root}assets/config.js?v=2"></script><script src="{root}assets/app.js?v=2"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
