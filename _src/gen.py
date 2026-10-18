@@ -120,11 +120,12 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="canonical" href="{url}">
 <meta property="og:type" content="website"><meta property="og:locale" content="ru_RU"><meta property="og:site_name" content="{BRAND}">
 <meta property="og:title" content="{e(ogtitle or title, quote=True)}"><meta property="og:description" content="{e(desc, quote=True)}">
-<meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}assets/og.png">
+<meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}assets/og.png?v=2">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{SITE}assets/og.png?v=2">
 <meta name="theme-color" content="#fbf6ef">
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{root}assets/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="{root}assets/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="{root}assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/style.css?v=7">{ld}
