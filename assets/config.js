@@ -14,7 +14,7 @@ window.SITE_CONFIG = {
     // ЗАПОЛНИТЬ при желании: WhatsApp (https://wa.me/7XXXXXXXXXX), e-mail, телефон
     whatsapp: "",
     // ЗАПОЛНИТЬ: публичные ссылки-приглашения
-    channelUrl: "",   // публичный (бесплатный) Telegram-канал
+    channelUrl: "https://t.me/koleso_uspeha",   // публичный (бесплатный) Telegram-канал
     vkUrl: "",
     youtubeUrl: ""
   },
