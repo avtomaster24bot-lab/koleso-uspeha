@@ -33,9 +33,6 @@
 ### Коды продуктов
 `koleso-full`, `koleso-part1`, `koleso-part2`, `modul-1`…`modul-6`, `trening-<адрес>` (напр. `trening-dengi-iz-detstva`), `mini-<адрес>` (напр. `mini-samozvanets`), `marafon-samoprinyatie`, `marafon-dvizhenie`, `igra-lila`, `trening-samotsennost`, `arhitektor-produkta`, `psy-obuchenie`, `individ-sessiya`, `individ-paket3`, `individ-paket5`, `individ-povtor`, `diagnostika`, `club`.
 
-## ИИ-помощник (кнопка «Подобрать программу»)
-Файлы `assets/ai-widget.js` и `assets/ai-scenario.json` — копия виджета из закрытого репозитория `kod-zhizni-ai`. Настройка — блок `ai` в `assets/config.js`: пустой `aiEndpoint` — отвечает сценарный «Навигатор» (без ИИ и без сервера); адрес функции Supabase — живой ИИ Agnes с автоматическим переходом на сценарий при сбое. `enabled: false` — убрать кнопку.
-
 ## Тексты и отзывы
 Страницы генерируются скриптом: `python3 _src/gen.py` (тексты — `_src/data.py`, отзывы — `_src/reviews.py`). Результат — готовые HTML, сборка на хостинге не нужна.
 
