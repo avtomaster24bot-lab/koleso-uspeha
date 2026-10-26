@@ -43,7 +43,7 @@ function tgLink(sc, text) {
 
 function resolveButton(b, sc) {
   if (!b) return null;
-  if (b.path !== undefined) return { label: b.label, url: (sc.site_base || "") + ((sc.path_map && sc.path_map[b.path]) || b.path) };
+  if (b.path !== undefined) return { label: b.label, url: (sc.site_base || "") + b.path };
   if (b.tg !== undefined) return { label: b.label, url: tgLink(sc, b.tg) };
   if (b.url) return { label: b.label, url: b.url };
   if (b.cmd) return { label: b.label, cmd: b.cmd };
@@ -64,12 +64,6 @@ function crisisReply(sc) {
 }
 
 /** Главная функция сценария: текст → ответ. Никогда не бросает исключений. */
-/** Сценарий для другого сайта (v2 и т. п.): та же логика, свои адреса страниц. */
-function scenarioForSite(sc, site) {
-  const s = sc.sites && sc.sites[site];
-  return s ? Object.assign({}, sc, { site_base: s.site_base, path_map: s.path_map || {} }) : sc;
-}
-
 function scriptedReply(text, sc) {
   try {
     const raw = String(text || "");
@@ -153,7 +147,7 @@ var me = document.currentScript && document.currentScript.src;
 var scenarioUrl = CFG.scenarioUrl || (me ? me.replace(/ai-widget\.js(\?.*)?$/, "ai-scenario.json" + (me.match(/\?.*$/) || [""])[0]) : "ai-scenario.json");
 var LABEL = { ai: "ИИ-помощник", script: "Навигатор" };
 var SC = null, scPromise = null;
-var MINI_SC = { site_base: "", marina_tg: "https://t.me/MarinaNew", crisis: { keywords: ["суицид", "не хочу жить", "покончить с собой", "убить себя"], reply: "Пожалуйста, не оставайтесь с этим одни: 112 — при угрозе жизни; +7 (495) 989-50-50 — экстренная психологическая помощь МЧС (круглосуточно); 8-800-2000-122 — для детей, подростков и родителей.", buttons: [] },
+var MINI_SC = { site_base: "", marina_tg: "https://t.me/MarinaNew", crisis: { keywords: ["суицид", "не хочу жить", "покончить с собой", "убить себя"], reply: "Пожалуйста, позвоните прямо сейчас: 8-800-2000-122 (бесплатно, круглосуточно), при угрозе жизни — 112.", buttons: [] },
   intents: [], menu: { reply: "Напишите Марине — она ответит лично.", buttons: [] }, default: { reply: "Напишите, пожалуйста, Марине в Telegram — она ответит лично и подскажет, с чего начать.", buttons: [{ label: "Написать Марине", url: "https://t.me/MarinaNew" }] } };
 function loadScenario() {
   if (SC) return Promise.resolve(SC);
@@ -279,7 +273,7 @@ function open() {
   panel.classList.add("open"); btn.style.display = "none"; setTimeout(function () { ta.focus(); }, 50);
   if (opened) return; opened = true; goal("ai_open");
   loadScenario().then(function (sc) {
-    panel.querySelector(".kzai-d").textContent = sc.disclaimer || "Помощник — не психолог и не врач. Если очень тяжело: 112; МЧС +7 (495) 989-50-50; детям и подросткам — 8-800-2000-122.";
+    panel.querySelector(".kzai-d").textContent = sc.disclaimer || "Помощник — не психолог и не врач. Если очень тяжело: 8-800-2000-122, 112.";
     if (history.length) {
       history.forEach(function (m) { if (m.role === "user") addUser(m.shown || m.content); else addBot({ reply: m.content, source: m.source, suggestions: m.suggestions }); });
     } else {
