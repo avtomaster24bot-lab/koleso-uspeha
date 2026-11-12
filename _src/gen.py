@@ -3,9 +3,12 @@
 import os, html, json
 from data import TOPICS, FORMATS, MODULES, T, MINIS
 from reviews import R, HOME
+from legal import oferta_body, politika_body, disclaimer, crisis
 
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # корень сайта (папка над _src)
 SITE = "https://avtomaster24bot-lab.github.io/koleso-uspeha/"
+VNUTRIKOD = "https://avtomaster24bot-lab.github.io/vnutrikod/"
+ASSET_V = "11"
 BRAND = "Код счастливой жизни"
 MARINA_TG = "https://t.me/MarinaNew"
 HOSTS = "Марина Степанова"
@@ -21,7 +24,7 @@ def turl(slug): return "trening/%s/" % slug
 def miniurl(slug): return "mini/%s/" % slug
 
 def nav(root, active):
-    items = [("", "Главная", "home"), ("katalog/", "Тренинги", "cat"), ("koleso-uspeha/", "Программа", "prog"),
+    items = [("", "Главная", "home"), ("navigator/", "ИИ-навигатор", "nav"), ("katalog/", "Тренинги", "cat"), ("koleso-uspeha/", "Программа", "prog"),
              ("dlya-psihologov/", "Психологам", "psy"), ("individualno/", "Индивидуально", "ind"), ("vedushchie/", "Ведущая", "hosts"), ("otzyvy/", "Отзывы", "rev"), ("faq/", "Вопросы", "faq")]
     return "".join('<a href="%s%s"%s>%s</a>' % (root, u, ' class="on"' if k == active else "", t) for u, t, k in items)
 
@@ -64,6 +67,12 @@ def msg_for(code, title):
         return hi + "Хочу записаться на полную индивидуальную диагностику по запросу (30 минут, 1 на 1).", "Подскажите, пожалуйста, ближайшее время и как оплатить.", True
     if code == "club":
         return hi + "Хочу оформить подписку на закрытый клуб «Код счастливой жизни».", "Пришлите, пожалуйста, ссылку на оплату и доступ.", True
+    if code == "navigator-trial":
+        return hi + "Хочу оформить пробный доступ к ИИ-навигатору «Колесо успеха» (990 ₽ / 5 500 ₸).", "Пришлите, пожалуйста, как оплатить и как подключить доступ.", True
+    if code == "navigator-month":
+        return hi + "Хочу оформить месячную подписку на ИИ-навигатор «Колесо успеха» (2 490 ₽ / 13 500 ₸).", "Пришлите, пожалуйста, как оплатить и как подключить доступ.", True
+    if code == "navigator-year":
+        return hi + "Хочу оформить годовую подписку на ИИ-навигатор «Колесо успеха» (19 900 ₽ / 107 000 ₸).", "Пришлите, пожалуйста, как оплатить и как подключить доступ.", True
     if code == "podbor":
         return hi + "Хочу подобрать тренинг под свой запрос.", "Подскажите, с чего лучше начать и ближайшие даты.", False
     if code == "vopros":
@@ -128,7 +137,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="{root}assets/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="{root}assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v=10">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v={ASSET_V}">{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -139,12 +148,13 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <footer class="foot"><div class="wrap"><div class="cols">
 <div><h4>{BRAND}</h4><p>Трансформационные тренинги, мини-тренинги, Т-игры и индивидуальная работа. Онлайн, вживую.<br>Ведущая: {HOSTS}.</p></div>
 <div><h4>Тренинги</h4><ul><li><a href="{root}katalog/">Все тренинги</a></li><li><a href="{root}koleso-uspeha/">Программа «Колесо успеха»</a></li><li><a href="{root}katalog/?format=mini">Мини-тренинги</a></li><li><a href="{root}igra/lila/">Игра «Лила»</a></li><li><a href="{root}individualno/">Индивидуальная работа</a></li><li><a href="{root}diagnostika/">Диагностика</a></li></ul></div>
-<div><h4>Ещё</h4><ul><li><a href="{root}dlya-psihologov/">Для психологов и коучей</a></li><li><a href="{root}klub/">Закрытый клуб</a></li><li><a href="{root}otzyvy/">Отзывы</a></li><li><a href="{root}faq/">Вопросы и ответы</a></li></ul></div>
+<div><h4>Ещё</h4><ul><li><a href="{root}navigator/">ИИ-навигатор «Колесо успеха»</a></li><li><a href="{root}dlya-psihologov/">Для психологов и коучей</a></li><li><a href="{root}klub/">Закрытый клуб</a></li><li><a href="{root}otzyvy/">Отзывы</a></li><li><a href="{root}faq/">Вопросы и ответы</a></li><li><a href="https://avtomaster24bot-lab.github.io/vnutrikod/testy/koleso/">Бесплатный тест «Колесо баланса»</a></li></ul></div>
 <div><h4>Связаться</h4><ul><li><a href="https://t.me/MarinaNew" data-link="marinaTelegram" target="_blank" rel="noopener">Марина Степанова — Telegram @MarinaNew</a></li><li><a class="hidden" data-link="whatsapp" data-hide-empty target="_blank" rel="noopener">WhatsApp</a></li><li><a class="hidden" data-link="channelUrl" data-hide-empty target="_blank" rel="noopener">Telegram-канал</a></li><li><a class="hidden" data-link="vkUrl" data-hide-empty target="_blank" rel="noopener">ВКонтакте</a></li><li><a class="hidden" data-link="youtubeUrl" data-hide-empty target="_blank" rel="noopener">YouTube</a></li></ul></div>
-</div><p class="small" style="margin-top:28px;opacity:.7">Тренинги — это групповая трансформационная работа и не заменяют медицинскую или психиатрическую помощь.</p></div></footer>
+</div><p class="small" style="margin-top:28px;opacity:.7">Это не медицинская услуга: тренинги, тесты и ИИ-навигатор не заменяют медицинскую или психиатрическую помощь. <a href="{root}vazhno/">Куда обратиться в кризис</a>. <a href="{root}oferta/">Оферта</a> · <a href="{root}politika/">Политика персональных данных</a>.</p></div></footer>
 {m}
 {MODAL}
-<script src="{root}assets/config.js?v=10"></script><script src="{root}assets/app.js?v=10"></script>
+<script src="{root}assets/config.js?v={ASSET_V}"></script><script src="{root}assets/app.js?v={ASSET_V}"></script>
+<script src="{root}assets/ai-widget.js?v={ASSET_V}"></script>
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -239,8 +249,22 @@ def home():
 <span class="kicker">Онлайн · живые группы · авторские тренинги</span>
 <h1>Код счастливой жизни: убери внутренние тормоза — и деньги, цели и отношения сдвинутся</h1>
 <p class="lead">Трансформационные тренинги, мини-тренинги и Т-игры для предпринимателей, экспертов, руководителей и всех, кто хочет большего. Ведущая — {HOSTS}. Есть и индивидуальная работа.</p>
-<div class="btns"><a class="btn" href="katalog/">Подобрать тренинг</a><a class="btn ghost" href="koleso-uspeha/">Программа на 6 месяцев</a></div>
+<div class="btns"><a class="btn" href="{VNUTRIKOD}testy/koleso/">Бесплатный тест «Колесо баланса»</a><a class="btn ghost" href="navigator/">Тарифы ИИ-навигатора</a><a class="btn ghost" href="https://t.me/koleso_uspeha" data-link="channelUrl" target="_blank" rel="noopener">Telegram-канал</a></div>
+<p class="hero-legal">За 2 минуты оцените 6 сфер жизни. Дальше — ежедневный маршрут в навигаторе. Это не медицинская услуга.</p>
 <div class="meta"><span class="chip c1">Деньги</span><span class="chip c2">Страхи</span><span class="chip c3">Контроль и лидерство</span><span class="chip c1">Конфликты</span><span class="chip c2">Проявленность</span><span class="chip c4">Цели</span></div>
+</div></section>
+
+<section class="section alt" id="navigator-offer"><div class="wrap">
+<span class="kicker">Подписка · можно начать бесплатно</span>
+<h2>ИИ-навигатор «Колесо успеха»</h2>
+<p class="lead">Человек за пару минут видит свою картину по сферам жизни, затем каждый день идёт по методу Марины на сайте. За глубиной — живая диагностика или сессия. Тесты, карта дня и ограниченный диалог с навигатором доступны бесплатно.</p>
+<div class="tiers nav-offer">
+<div class="tier"><h3>Проба</h3><p class="muted">Короткий старт, чтобы понять, подходит ли формат.</p><div class="p">{price_span("navigator-trial","")}</div><span class="cur">990 ₽ · 5 500 ₸</span>{cta("navigator-trial","","ИИ-навигатор — пробный доступ","Оформить пробу")}</div>
+<div class="tier best"><h3>Месяц</h3><p class="muted">Ежедневный маршрут и диалоги с навигатором.</p><div class="p">{price_span("navigator-month","")}</div><span class="cur">2 490 ₽ · 13 500 ₸</span>{cta("navigator-month","","ИИ-навигатор — подписка на месяц","Оформить месяц")}</div>
+<div class="tier"><h3>Год</h3><p class="muted">Выгоднее месяца, если готовы идти регулярно.</p><div class="p">{price_span("navigator-year","")}</div><span class="cur">19 900 ₽ · 107 000 ₸</span>{cta("navigator-year","","ИИ-навигатор — подписка на год","Оформить год")}</div>
+</div>
+<p class="small muted" style="margin-top:16px">Онлайн-оплата пока не подключена: после заявки Марина пришлёт реквизиты в Telegram. Публичный канал <a href="https://t.me/koleso_uspeha" data-link="channelUrl" target="_blank" rel="noopener">@koleso_uspeha</a> — бесплатно.</p>
+<div class="btns"><a class="btn ghost" href="navigator/">Как работает навигатор</a><a class="btn ghost" href="{VNUTRIKOD}testy/koleso/">Пройти тест бесплатно</a><a class="btn ghost" href="katalog/">Живые тренинги</a></div>
 </div></section>
 
 <section class="section"><div class="wrap">
@@ -262,6 +286,7 @@ def home():
 <section class="section"><div class="wrap">
 <span class="kicker">Как выстроен путь</span><h2>Начните с малого — идите так глубоко, как готовы</h2>
 <div class="ladder" style="margin-top:22px">
+<div class="step"><span class="s">0</span><h3>Бесплатный тест и ИИ-навигатор</h3><p class="muted">Тест «Колесо баланса» за 2 минуты. Подписка навигатора — от <span data-price="navigator-trial" data-group="">990 ₽ / 5 500 ₸</span>.</p><a href="navigator/">Тарифы навигатора →</a></div>
 <div class="step"><span class="s">1</span><h3>Диагностика</h3><p class="muted">Лично, 1 на 1, 30 минут: увидеть, что стоит за вашей ситуацией. <span data-price="diagnostika" data-group="">1 000 ₽</span> — засчитываются при покупке.</p><a href="diagnostika/">Диагностика →</a></div>
 <div class="step"><span class="s">2</span><h3>Мини-тренинг</h3><p class="muted">1–1,5 часа онлайн. Групповая диагностика: увидеть, что именно тормозит.</p><a href="katalog/?format=mini">Мини-тренинги →</a></div>
 <div class="step"><span class="s">3</span><h3>Закрытый клуб</h3><p class="muted">Подписка: медитации по понедельникам и групповые «Разборы». <span data-price="club" data-group="">1 990 ₽/мес</span>.</p><a href="klub/">Клуб →</a></div>
@@ -598,7 +623,11 @@ FAQ_MAIN = [
  ("Можно купить один тренинг или один модуль?", "Да. Каждый тренинг и каждый модуль можно пройти отдельно. Программу «Колесо успеха» можно пройти целиком (6 месяцев) или частями по 3 месяца."),
  ("Я не предприниматель. Мне подойдёт?", "Да. Тренинги для предпринимателей, экспертов, фрилансеров, руководителей и тех, кто работает в найме. Масштаб у каждого свой — и переход на новый уровень в работе тоже рост."),
  ("Как записаться и оплатить?", "Нажмите «Купить» на странице тренинга — откроется Telegram Марины (@MarinaNew) с готовым сообщением. Марина пришлёт ближайшую дату и детали для оплаты."),
- ("Это психотерапия?", "Нет. Это групповая трансформационная работа: тренинги и игры. Она не заменяет медицинскую или психиатрическую помощь. Если вы в остром состоянии — пожалуйста, обратитесь к врачу."),
+ ("Это психотерапия?", "Нет. Это групповая трансформационная работа: тренинги и игры. Она не заменяет медицинскую или психиатрическую помощь. Если вы в остром состоянии — пожалуйста, обратитесь к врачу. Подробнее — на странице «Важно»."),
+ ("Что такое ИИ-навигатор?", "Это подписка: ежедневный маршрут по методу Марины и диалог с помощником на сайте (кнопка в правом нижнем углу). Пока не подключён ключ ИИ, помощник отвечает по готовому сценарию — это подписано «Навигатор». Тест «Колесо баланса», карта дня и ограниченный диалог можно начать бесплатно."),
+ ("Сколько стоит ИИ-навигатор?", "Проба — 990 ₽ (5 500 ₸), месяц — 2 490 ₽ (13 500 ₸), год — 19 900 ₽ (107 000 ₸). Живые тренинги и клуб — отдельные продукты, их цены на своих страницах."),
+ ("Как оплатить?", "Нажмите тариф или «Купить» — откроется Telegram Марины (@MarinaNew) с готовым сообщением. Онлайн-оплата на сайте пока не подключена: Марина пришлёт реквизиты. Когда появится платёжная ссылка, она откроется кнопкой «Оплатить онлайн»."),
+ ("Где оферта и политика данных?", "Публичная оферта и политика персональных данных опубликованы на сайте. Реквизиты ИП пока отмечены как заглушки и будут заполнены владельцем."),
  ("Я психолог. Есть что-то для специалистов?", 'Да, смотрите <a href="../dlya-psihologov/">раздел для психологов и коучей</a>.'),
 ]
 def faq_page():
@@ -754,12 +783,66 @@ def klub():
     layout("klub/", "Закрытый клуб «Код счастливой жизни» — подписка", "Закрытый клуб по подписке в Telegram: потоковые медитации по понедельникам и групповые «Разборы» с Мариной Степановой.", body, "",
            mcta=cta("club", "", CLUB_DEFAULT, "Вступить в клуб"))
 
+def navigator_page():
+    root = "../"
+    body = f"""<section class="hero"><div class="wrap">{crumbs(root, [(None, "ИИ-навигатор")])}
+<span class="kicker">Подписка · сайт и Telegram</span>
+<h1>ИИ-навигатор «Колесо успеха»</h1>
+<p class="lead">За 2 минуты вы оцениваете 6 сфер жизни. Затем каждый день идёте по методу Марины Степановой: подсказки навигатора на сайте, а за живой глубиной — диагностика или сессия.</p>
+<div class="btns"><a class="btn" href="{VNUTRIKOD}testy/koleso/">Пройти бесплатный тест</a><a class="btn ghost" href="https://t.me/koleso_uspeha" data-link="channelUrl" target="_blank" rel="noopener">Бесплатный Telegram-канал</a></div>
+<p class="hero-legal">Это не медицинская услуга и не замена консультации врача. <a href="{root}vazhno/">Куда обратиться в кризис</a>.</p>
+</div></section>
+<section class="section" style="padding-top:10px"><div class="wrap">
+<div class="grid g2">
+<div class="panel"><h2>Что входит</h2>{ticks(["Бесплатно: тест «Колесо баланса», карта дня и ограниченный диалог с навигатором (кнопка в правом нижнем углу).","Подписка: ежедневный маршрут по сферам колеса и расширенный диалог с помощником.","Живой следующий шаг: диагностика, мини-тренинг или сессия с Мариной — по отдельному прайсу.","Помощник работает по сценарию всегда; живой ИИ включается, когда владелец добавит ключ сервиса — в окне будет метка «ИИ-помощник»."])}</div>
+<div class="panel"><h2>Как начать</h2>{ticks(["Пройдите бесплатный тест «Колесо баланса» на сайте «Внутрикод».","Откройте помощника на этом сайте и опишите запрос своими словами.","Если формат откликнулся — выберите тариф и напишите Марине: она пришлёт, как оплатить.","Онлайн-оплата через платёжный сервис будет добавлена позже; до этого — перевод по реквизитам."])}</div>
+</div>
+<h2 style="margin:36px 0 8px">Тарифы</h2>
+<div class="tiers nav-offer">
+<div class="tier"><h3>Проба</h3><p class="muted">Короткий старт без обязательства на год.</p><div class="p">{price_span("navigator-trial","")}</div>{cta("navigator-trial","","ИИ-навигатор — пробный доступ","Оформить пробу")}</div>
+<div class="tier best"><h3>Месяц</h3><p class="muted">Основной тариф для регулярной работы с собой.</p><div class="p">{price_span("navigator-month","")}</div>{cta("navigator-month","","ИИ-навигатор — подписка на месяц","Оформить месяц")}</div>
+<div class="tier"><h3>Год</h3><p class="muted">Выгоднее, если готовы идти весь год.</p><div class="p">{price_span("navigator-year","")}</div>{cta("navigator-year","","ИИ-навигатор — подписка на год","Оформить год")}</div>
+</div>
+<p class="small muted" style="margin-top:16px">Цены указаны в рублях и тенге. Закрытый клуб (медитации и «Разборы») — отдельная подписка, см. <a href="{root}klub/">страницу клуба</a>.</p>
+</div></section>
+<section class="section alt"><div class="wrap">
+<span class="kicker">Дальше — вживую</span><h2>Когда нужен живой шаг</h2>
+<div class="grid g3" style="margin-top:20px">
+<div class="panel"><h3>Диагностика</h3><p>30 минут один на один, чтобы увидеть, что стоит за ситуацией.</p><a href="{root}diagnostika/">О диагностике →</a></div>
+<div class="panel"><h3>Мини-тренинг</h3><p>1–1,5 часа групповой диагностики с лёгким разворотом.</p><a href="{root}katalog/?format=mini">Мини-тренинги →</a></div>
+<div class="panel"><h3>Индивидуальная сессия</h3><p>1–2 часа: разбор системы мышления и её перенастройка.</p><a href="{root}individualno/">К сессиям →</a></div>
+</div>
+</div></section>"""
+    layout("navigator/", "ИИ-навигатор «Колесо успеха» — подписка",
+           "ИИ-навигатор по методу Марины Степановой: бесплатный тест «Колесо баланса», ежедневный маршрут, тарифы 990 ₽ / 2 490 ₽ / 19 900 ₽ (5 500–107 000 ₸). Не медицинская услуга.",
+           body, "nav", mcta=cta("navigator-month", "", "ИИ-навигатор — подписка на месяц", "Оформить месяц"))
+
+def oferta_page():
+    root = "../"
+    body = f"""<section class="hero"><div class="wrap">{crumbs(root, [(None, "Публичная оферта")])}<span class="kicker">Документы</span><h1>Публичная оферта</h1><p class="lead">Шаблон договора на информационные и консультационные услуги. Поля с жёлтой пометкой нужно заполнить реквизитами ИП.</p></div></section>
+<section class="section" style="padding-top:0"><div class="wrap">{oferta_body(BRAND, SITE, root)}</div></section>"""
+    layout("oferta/", "Публичная оферта", "Публичная оферта сайта «Код счастливой жизни»: ИИ-навигатор, тренинги и консультации Марины Степановой. Реквизиты продавца — шаблон для заполнения.", body)
+
+def politika_page():
+    root = "../"
+    body = f"""<section class="hero"><div class="wrap">{crumbs(root, [(None, "Политика персональных данных")])}<span class="kicker">Документы</span><h1>Политика персональных данных</h1><p class="lead">Как мы обращаемся с данными на сайте и в заявках. Реквизиты оператора пока отмечены как заглушки.</p></div></section>
+<section class="section" style="padding-top:0"><div class="wrap">{politika_body(BRAND, SITE, root)}</div></section>"""
+    layout("politika/", "Политика персональных данных", "Политика персональных данных сайта «Код счастливой жизни»: что хранится в браузере, что уходит в Telegram и ИИ-помощнику. Реквизиты оператора — шаблон.", body)
+
+def vazhno_page():
+    root = "../"
+    body = f"""<section class="hero"><div class="wrap">{crumbs(root, [(None, "Важно")])}<span class="kicker">Важно</span><h1>Это не медицинская услуга</h1><p class="lead">Материалы сайта, тесты, ИИ-навигатор и живые сессии — психологическая и просветительская работа, а не лечение.</p></div></section>
+<section class="section" style="padding-top:0"><div class="wrap">{disclaimer()}{crisis()}
+<div class="panel"><h2>Документы</h2><p><a href="{root}oferta/">Публичная оферта</a> · <a href="{root}politika/">Политика персональных данных</a></p></div>
+</div></section>"""
+    layout("vazhno/", "Важно: не медицинская услуга", "Тренинги и ИИ-навигатор «Код счастливой жизни» не заменяют медицинскую или психиатрическую помощь. Телефоны экстренной психологической помощи.", body)
+
 def notfound():
     body = '''<section class="hero"><div class="wrap center"><h1>Страница не найдена</h1><p class="lead">Возможно, ссылка устарела. Начните с главной или каталога.</p><div class="btns"><a class="btn" href="/koleso-uspeha/">На главную</a><a class="btn ghost" href="/koleso-uspeha/katalog/">Все тренинги</a></div></div></section>'''
     layout("404.html", "Страница не найдена", "Страница не найдена.", body)
 
 if __name__ == "__main__":
-    home(); catalog(); individual(); diagnostics(); flagship(); psy(); hosts(); reviews_page(); faq_page(); klub()
+    home(); catalog(); individual(); diagnostics(); flagship(); psy(); hosts(); reviews_page(); faq_page(); klub(); navigator_page(); oferta_page(); politika_page(); vazhno_page()
     marathon_samoprinyatie(); marathon_dvizhenie(); lila()
     for m in MODULES: module_page(m)
     for s in T: training_page(s)

@@ -191,3 +191,17 @@ details>div{padding:0 0 18px;color:#4a3f38}
 .early{color:var(--accent-d);font-weight:700;font-size:14px;margin:-4px 0 8px}.early:empty,.pnote:empty{display:none}
 .pnote{font-size:13px;line-height:1.45;background:var(--soft,#f6f1ea);border-radius:10px;padding:8px 10px;margin:0 0 10px}
 .why p{margin:0 0 10px}.why .save{display:inline;margin:0}
+
+/* ---- Оферта, политика, ИИ-навигатор ---- */
+mark.ph{background:#fff4c2;color:#5a4a12;padding:0 .25em;border-radius:3px;font-weight:700;border-bottom:1px dashed #c9a227;font-style:normal}
+.legal-req .note{margin-bottom:12px}
+.nav-offer{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:22px}
+.nav-offer .tier .cur{display:block;font-size:14px;color:var(--muted,#6d625a);font-weight:600;margin-top:-8px;margin-bottom:12px}
+.hero-legal{font-size:13px;opacity:.8;margin-top:14px;max-width:46rem}
+@media(max-width:700px){
+  .nav{flex-wrap:wrap}
+  .btns{flex-wrap:wrap}
+  .btns .btn,.btns .btn.ghost{width:100%;text-align:center;box-sizing:border-box}
+  .hero h1{font-size:1.7rem;line-height:1.25}
+  .mcta{left:12px;right:12px;width:auto}
+}
