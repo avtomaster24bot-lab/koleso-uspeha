@@ -1,0 +1,74 @@
+{
+ "trening-samozvanets-strah-razoblacheniya": {
+  "hash": "f20b08eba081",
+  "duration": 155.9,
+  "bytes": 935931,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-samoocenka": {
+  "hash": "aab7fa706792",
+  "duration": 140.9,
+  "bytes": 846073,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-samozvanets": {
+  "hash": "fcbc993e9433",
+  "duration": 111.2,
+  "bytes": 667508,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-samotsennost": {
+  "hash": "7a86d9e726bf",
+  "duration": 132.6,
+  "bytes": 796448,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-perfekcionizm": {
+  "hash": "3a38bda32034",
+  "duration": 144.2,
+  "bytes": 865684,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-koroli-prokrastinacii": {
+  "hash": "4a5c66ef7745",
+  "duration": 120.2,
+  "bytes": 721644,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-proyavlyajsya-legko": {
+  "hash": "cb52d6cc8ab8",
+  "duration": 123.0,
+  "bytes": 738481,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-moj-produkt-krutoj": {
+  "hash": "f027ffc4e9bc",
+  "duration": 147.3,
+  "bytes": 884501,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-kak-ozvuchivat-cenu": {
+  "hash": "c13d56192200",
+  "duration": 134.4,
+  "bytes": 806796,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-stoimost-uslugi": {
+  "hash": "f807daf83f60",
+  "duration": 159.7,
+  "bytes": 958691,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "modul-4": {
+  "hash": "47551c6e2f35",
+  "duration": 142.0,
+  "bytes": 852691,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "modul-5": {
+  "hash": "1232b4f82c4c",
+  "duration": 153.5,
+  "bytes": 921286,
+  "voice": "ru-RU-SvetlanaNeural"
+ }
+}
