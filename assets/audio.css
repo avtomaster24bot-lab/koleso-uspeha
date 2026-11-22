@@ -1,0 +1,36 @@
+/* Код счастливой жизни — плеер «Послушать» (в стиле сайта: тёплая палитра) */
+.aud-wrap{margin-top:-6px;margin-bottom:6px}
+.aud{display:flex;gap:18px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px 22px;margin:10px 0 18px;position:relative}
+.aud-play{flex:0 0 auto;width:56px;height:56px;border-radius:50%;border:0;cursor:pointer;background:var(--accent);display:grid;place-items:center;box-shadow:0 6px 18px rgba(200,85,61,.28);transition:transform .15s,background .15s}
+.aud-play:hover{background:var(--accent-d);transform:scale(1.05)}
+.aud-play svg{width:24px;height:24px;fill:#fff}
+.aud .i-pause{display:none}.aud.playing .i-pause{display:block}.aud.playing .i-play{display:none}
+.aud.playing .aud-play{animation:audpulse 1.8s ease-in-out infinite}
+@keyframes audpulse{0%,100%{box-shadow:0 0 0 0 rgba(200,85,61,.35)}50%{box-shadow:0 0 0 10px rgba(200,85,61,0)}}
+.aud-b{flex:1;min-width:0}
+.aud-k{display:block;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent-d);margin-bottom:2px}
+.aud-t{display:block;font:600 18px/1.3 var(--serif);margin-bottom:10px}
+.aud-t a{color:var(--ink);text-decoration:none}.aud-t a:hover{color:var(--accent-d)}
+.aud-bar{height:8px;border-radius:99px;background:var(--bg2);cursor:pointer;position:relative}
+.aud-bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:var(--accent)}
+.aud-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
+.aud-rate{background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:3px 10px;font:700 12px var(--sans);cursor:pointer}
+.aud-dl{color:var(--accent-d)}
+.aud audio{display:block;width:100%;margin-top:8px}
+.aud.js audio{display:none}
+.aud:not(.js) .aud-play,.aud:not(.js) .aud-bar,.aud:not(.js) .aud-meta{display:none}
+.aud-next{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.aud-nh{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--green);margin-right:4px}
+.aud-ni{display:inline-flex;align-items:center;gap:2px}
+.aud-nb{background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:7px 14px;font:600 13.5px/1.3 var(--sans);cursor:pointer;text-align:left}
+.aud-nb:hover{background:var(--bg2);border-color:var(--accent-l)}
+.aud-nb i{font-style:normal;color:var(--muted);font-weight:600;margin-left:4px}
+.aud-nl{color:var(--muted);text-decoration:none;font-size:14px;padding:4px}.aud-nl:hover{color:var(--accent-d)}
+.aud-auto{font-size:12.5px;color:var(--muted);display:inline-flex;gap:6px;align-items:center;margin-left:auto}
+.aud-n{font-size:13px;color:var(--muted);margin:10px 0 0}
+.aud.compact{margin:0;padding:14px 16px;gap:14px;align-items:center;height:100%}
+.aud.compact .aud-play{width:44px;height:44px}.aud.compact .aud-play svg{width:18px;height:18px}
+.aud.compact .aud-t{font-size:16px;margin-bottom:8px}
+.aud-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:18px}
+.aud-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.aud-chips .chip{text-decoration:none;color:var(--ink)}
+@media (max-width:560px){.aud{padding:14px;gap:12px}.aud-play{width:48px;height:48px}.aud-list{grid-template-columns:1fr}.aud-auto{margin-left:0}}
