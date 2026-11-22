@@ -4,11 +4,12 @@ import os, html, json
 from data import TOPICS, FORMATS, MODULES, T, MINIS
 from reviews import R, HOME
 from legal import oferta_body, politika_body, disclaimer, crisis
+from audio_scripts import SCRIPTS as AUDIO, BY_ID as AUDIO_BY_ID, BY_URL as AUDIO_BY_URL, EXTRA_PAGES as AUDIO_EXTRA, PATHS as APATHS, ORDER as AORDER
 
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # корень сайта (папка над _src)
 SITE = "https://avtomaster24bot-lab.github.io/koleso-uspeha/"
 VNUTRIKOD = "https://avtomaster24bot-lab.github.io/vnutrikod/"
-ASSET_V = "11"
+ASSET_V = "13"
 BRAND = "Код счастливой жизни"
 MARINA_TG = "https://t.me/MarinaNew"
 HOSTS = "Марина Степанова"
@@ -114,9 +115,40 @@ MODAL = '''<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <p class="small muted">Всё проходит онлайн и только вживую — с Мариной Степановой.</p>
 </div></div>'''
 
+# ---------- Аудио «Послушать»: продающие аудио-истории (голос диктора) ----------
+_amf = os.path.join(OUT, "assets/audio/manifest.json")
+AMAN = json.load(open(_amf)) if os.path.exists(_amf) else {}
+def mmss(sec): sec = int(round(sec)); return "%d:%02d" % (sec // 60, sec % 60)
+def asrc(i, root): return "%sassets/audio/%s.mp3?v=%s" % (root, i, AMAN[i]["hash"][:6])
+def audio_block(x, root, compact=False, link=False):
+    m = AMAN.get(x["id"])
+    if not m: return ""
+    src = asrc(x["id"], root)
+    ttl = ('<a href="%s%s">%s</a>' % (root, x["url"], e(x["title"]))) if link else e(x["title"])
+    nexts = [AUDIO_BY_ID[n] for n in x.get("next", []) if n in AUDIO_BY_ID and n in AMAN]
+    nx = ""
+    if nexts and not compact:
+        data = json.dumps([{"id": n["id"], "t": n["title"], "src": asrc(n["id"], root), "u": root + n["url"], "d": mmss(AMAN[n["id"]]["duration"])} for n in nexts], ensure_ascii=False)
+        nx = ('<div class="aud-next" data-next="%s"><span class="aud-nh">Дальше послушать:</span>%s<label class="aud-auto"><input type="checkbox" data-autonext checked> автопродолжение</label></div>'
+              % (e(data, quote=True), "".join('<span class="aud-ni"><button type="button" class="aud-nb" data-nextplay="%d">▶ %s <i>%s</i></button><a href="%s%s" class="aud-nl" title="Открыть страницу" aria-label="Открыть страницу">↗</a></span>' % (k, e(n["title"]), mmss(AMAN[n["id"]]["duration"]), root, n["url"]) for k, n in enumerate(nexts))))
+    kick = "Послушать" if compact or x["id"] != "start" else "С чего начать · послушать"
+    note = "" if compact else ('<p class="aud-n">Озвучено голосом диктора — это не голос Марины. Все живые онлайн-встречи проводит сама Марина. <a href="%sslushat/">Все аудио</a></p>' % root)
+    return ('<section class="aud%s" data-audio="%s"><button class="aud-play" type="button" aria-label="Слушать: %s"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5v14l11-7z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>'
+            '<div class="aud-b"><span class="aud-k">🎧 %s · <span data-dur>%s</span></span><b class="aud-t">%s</b>'
+            '<div class="aud-bar" role="slider" tabindex="0" aria-label="Перемотка" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>'
+            '<div class="aud-meta"><span data-cur>0:00</span><span>/ <span data-dur>%s</span></span><button class="aud-rate" type="button" data-rate title="Скорость">1×</button><a class="aud-dl" href="%s" download>Скачать</a></div>'
+            '<audio preload="none" controls src="%s"></audio>%s%s</div></section>') % (
+        " compact" if compact else "", x["id"], e(x["title"]), kick, mmss(m["duration"]), ttl, mmss(m["duration"]), src, src, nx, note)
+
 def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=None):
     depth = path.count("/")
     root = "../" * depth
+    ax = AUDIO_BY_URL.get(path) or (AUDIO_BY_ID[AUDIO_EXTRA[path]] if path in AUDIO_EXTRA and path != "slushat/" else None)
+    has_audio = bool(ax and ax["id"] in AMAN) or path == "slushat/"
+    if ax and ax["id"] in AMAN:
+        body = body.replace("</section>", '</section><div class="wrap aud-wrap">%s</div>' % audio_block(ax, root), 1)
+    a_css = ('<link rel="stylesheet" href="%sassets/audio.css?v=%s">' % (root, ASSET_V)) if has_audio else ""
+    a_js = ('<script src="%sassets/audio.js?v=%s"></script>' % (root, ASSET_V)) if has_audio else ""
     url = SITE + path
     full_title = title if BRAND in title else "%s — %s" % (title, BRAND)
     ld = ('<script type="application/ld+json">%s</script>' % json.dumps(jsonld, ensure_ascii=False)) if jsonld else ""
@@ -137,7 +169,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 <link rel="icon" href="{root}assets/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="{root}assets/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="{root}assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css?v={ASSET_V}">{ld}
+<link rel="stylesheet" href="{root}assets/style.css?v={ASSET_V}">{a_css}{ld}
 </head><body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{root}"><span class="logo-mark" aria-hidden="true"></span>{BRAND}</a>
@@ -154,7 +186,7 @@ def layout(path, title, desc, body, active="", mcta=None, ogtitle=None, jsonld=N
 {m}
 {MODAL}
 <script src="{root}assets/config.js?v={ASSET_V}"></script><script src="{root}assets/app.js?v={ASSET_V}"></script>
-<script src="{root}assets/ai-widget.js?v={ASSET_V}"></script>
+<script src="{root}assets/ai-widget.js?v={ASSET_V}"></script>{a_js}
 </body></html>'''
     fp = os.path.join(OUT, path, "index.html") if not path.endswith(".html") else os.path.join(OUT, path)
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -837,13 +869,34 @@ def vazhno_page():
 </div></section>"""
     layout("vazhno/", "Важно: не медицинская услуга", "Тренинги и ИИ-навигатор «Код счастливой жизни» не заменяют медицинскую или психиатрическую помощь. Телефоны экстренной психологической помощи.", body)
 
+def slushat_page():
+    root = "../"
+    have = [x for x in AUDIO if x["id"] in AMAN]
+    total = sum(AMAN[x["id"]]["duration"] for x in have)
+    chips = "".join('<a class="chip" href="#p-%s">%s</a> ' % (k, e(APATHS[k][0])) for k in AORDER)
+    body = f'''<section class="hero"><div class="wrap">{crumbs(root, [(None, "Слушать")])}
+<span class="kicker">Аудио · {len(have)} выпусков · {round(total / 60)} мин</span><h1>Слушать: аудио о программах Марины</h1>
+<p class="lead">Короткие аудио-истории о каждой программе: что вы получите и почему её стоит пройти. Начните со вступления, выберите свою тему — каждое аудио подскажет, что слушать дальше.</p>
+<div class="btns"><a class="btn" href="#" data-playall>▶ Слушать подряд</a></div>
+<p class="small muted" style="margin-top:14px">Озвучено голосом диктора — это не голос Марины. Все живые онлайн-встречи проводит сама Марина.</p>
+<div class="aud-chips">{chips}</div></div></section>
+<div class="wrap aud-wrap">{audio_block(AUDIO_BY_ID["start"], root)}</div>'''
+    seen = {"start"}
+    for n, k in enumerate(AORDER):
+        xs = [AUDIO_BY_ID[i] for i in APATHS[k][1] if i in AMAN and i not in seen]
+        seen.update(x["id"] for x in xs)
+        if not xs: continue
+        body += '<section class="section%s" id="p-%s"><div class="wrap"><span class="kicker">Маршрут %d</span><h2>%s</h2><p class="muted">Слушайте по порядку — от короткого знакомства к живой работе с Мариной.</p><div class="aud-list">%s</div></div></section>' % (
+            " alt" if n % 2 == 0 else "", k, n + 1, e(APATHS[k][0]), "".join(audio_block(x, root, compact=True, link=True) for x in xs))
+    layout("slushat/", "Слушать: аудио о программах Марины Степановой", "Аудио-истории о программах «Код счастливой жизни»: %d выпусков — что даёт каждая программа и с чего начать. Онлайн, вживую, с Мариной Степановой." % len(have), body)
+
 def notfound():
     body = '''<section class="hero"><div class="wrap center"><h1>Страница не найдена</h1><p class="lead">Возможно, ссылка устарела. Начните с главной или каталога.</p><div class="btns"><a class="btn" href="/koleso-uspeha/">На главную</a><a class="btn ghost" href="/koleso-uspeha/katalog/">Все тренинги</a></div></div></section>'''
     layout("404.html", "Страница не найдена", "Страница не найдена.", body)
 
 if __name__ == "__main__":
     home(); catalog(); individual(); diagnostics(); flagship(); psy(); hosts(); reviews_page(); faq_page(); klub(); navigator_page(); oferta_page(); politika_page(); vazhno_page()
-    marathon_samoprinyatie(); marathon_dvizhenie(); lila()
+    marathon_samoprinyatie(); marathon_dvizhenie(); lila(); slushat_page()
     for m in MODULES: module_page(m)
     for s in T: training_page(s)
     for m in MINIS: mini_page(m)

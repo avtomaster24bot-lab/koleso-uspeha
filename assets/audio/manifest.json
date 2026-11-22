@@ -1,14 +1,74 @@
 {
- "trening-samozvanets-strah-razoblacheniya": {
-  "hash": "f20b08eba081",
-  "duration": 155.9,
-  "bytes": 935931,
+ "diagnostika": {
+  "hash": "ad2643b13229",
+  "duration": 127.0,
+  "bytes": 762384,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-samoocenka": {
-  "hash": "aab7fa706792",
-  "duration": 140.9,
-  "bytes": 846073,
+ "individualno": {
+  "hash": "be4fcd9ba5e7",
+  "duration": 130.2,
+  "bytes": 781978,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "klub": {
+  "hash": "4399fd8820cc",
+  "duration": 119.7,
+  "bytes": 718915,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "koleso-uspeha": {
+  "hash": "584bf016fb31",
+  "duration": 133.2,
+  "bytes": 799967,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "lila": {
+  "hash": "6a3b9a6b9d09",
+  "duration": 135.5,
+  "bytes": 813206,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "marafon-dvizhenie-k-celi": {
+  "hash": "0d6f61b20db6",
+  "duration": 120.7,
+  "bytes": 724798,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "marafon-samoprinyatie": {
+  "hash": "2d04fffc2368",
+  "duration": 145.9,
+  "bytes": 875706,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-bazovyj-strah": {
+  "hash": "2fc0eb8f0a36",
+  "duration": 162.4,
+  "bytes": 974976,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-bez-menya": {
+  "hash": "a48b1347cc20",
+  "duration": 124.3,
+  "bytes": 746574,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-finansovyj-strah": {
+  "hash": "18f5dba335fd",
+  "duration": 129.8,
+  "bytes": 779271,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-istoki-konfliktov": {
+  "hash": "2f4835a7a3ec",
+  "duration": 134.1,
+  "bytes": 805089,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "mini-kontrol": {
+  "hash": "da7f98427ef2",
+  "duration": 121.8,
+  "bytes": 731169,
   "voice": "ru-RU-SvetlanaNeural"
  },
  "mini-samozvanets": {
@@ -17,46 +77,34 @@
   "bytes": 667508,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-samotsennost": {
-  "hash": "7a86d9e726bf",
-  "duration": 132.6,
-  "bytes": 796448,
+ "mini-strah-uspeha": {
+  "hash": "5ef21434cd9b",
+  "duration": 165.1,
+  "bytes": 991096,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-perfekcionizm": {
-  "hash": "3a38bda32034",
-  "duration": 144.2,
-  "bytes": 865684,
+ "mini-svyaz-v-konfliktah": {
+  "hash": "cf44faa01912",
+  "duration": 126.4,
+  "bytes": 759017,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-koroli-prokrastinacii": {
-  "hash": "4a5c66ef7745",
-  "duration": 120.2,
-  "bytes": 721644,
+ "modul-1": {
+  "hash": "a7748e9b703c",
+  "duration": 136.7,
+  "bytes": 820561,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-proyavlyajsya-legko": {
-  "hash": "cb52d6cc8ab8",
-  "duration": 123.0,
-  "bytes": 738481,
+ "modul-2": {
+  "hash": "6ccfd041169a",
+  "duration": 157.4,
+  "bytes": 945136,
   "voice": "ru-RU-SvetlanaNeural"
  },
- "trening-moj-produkt-krutoj": {
-  "hash": "f027ffc4e9bc",
-  "duration": 147.3,
-  "bytes": 884501,
-  "voice": "ru-RU-SvetlanaNeural"
- },
- "trening-kak-ozvuchivat-cenu": {
-  "hash": "c13d56192200",
-  "duration": 134.4,
-  "bytes": 806796,
-  "voice": "ru-RU-SvetlanaNeural"
- },
- "trening-stoimost-uslugi": {
-  "hash": "f807daf83f60",
-  "duration": 159.7,
-  "bytes": 958691,
+ "modul-3": {
+  "hash": "ff95fa4f9f32",
+  "duration": 144.4,
+  "bytes": 867133,
   "voice": "ru-RU-SvetlanaNeural"
  },
  "modul-4": {
@@ -69,6 +117,174 @@
   "hash": "1232b4f82c4c",
   "duration": 153.5,
   "bytes": 921286,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "modul-6": {
+  "hash": "30913ab8b00f",
+  "duration": 126.6,
+  "bytes": 759821,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "psihologam": {
+  "hash": "84ce42bd070a",
+  "duration": 119.7,
+  "bytes": 718890,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "start": {
+  "hash": "c0688226f1d4",
+  "duration": 198.3,
+  "bytes": 1190245,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-bazovyj-strah": {
+  "hash": "5ad2c821f9bd",
+  "duration": 126.6,
+  "bytes": 760137,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-dejstvuj-kak": {
+  "hash": "8b371716218d",
+  "duration": 134.8,
+  "bytes": 809086,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-dengi-iz-detstva": {
+  "hash": "d25f2fc8897f",
+  "duration": 130.3,
+  "bytes": 782546,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-finansovyj-potolok": {
+  "hash": "a0281261a531",
+  "duration": 135.0,
+  "bytes": 810255,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-finansovyj-strah-osvobozhdenie": {
+  "hash": "d3872f1fa965",
+  "duration": 155.9,
+  "bytes": 935787,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-fundament-starta": {
+  "hash": "fe4eb6396802",
+  "duration": 157.0,
+  "bytes": 942569,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-istinnost-celi": {
+  "hash": "a23747d5807c",
+  "duration": 142.9,
+  "bytes": 858016,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-kak-ozvuchivat-cenu": {
+  "hash": "c13d56192200",
+  "duration": 134.4,
+  "bytes": 806796,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-konflikty-v-rost": {
+  "hash": "9ad6d6c9c334",
+  "duration": 133.6,
+  "bytes": 802160,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-konkretnye-shagi": {
+  "hash": "eacff252e06f",
+  "duration": 141.7,
+  "bytes": 850667,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-koroli-prokrastinacii": {
+  "hash": "4a5c66ef7745",
+  "duration": 120.2,
+  "bytes": 721644,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-lider-a-ne-nyanka": {
+  "hash": "c1b5aa53f55c",
+  "duration": 162.2,
+  "bytes": 973491,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-moj-produkt-krutoj": {
+  "hash": "f027ffc4e9bc",
+  "duration": 147.3,
+  "bytes": 884501,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-moya-bogataya-zhizn": {
+  "hash": "23dd5d8bb313",
+  "duration": 143.1,
+  "bytes": 859298,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-ne-daj-soboj-manipulirovat": {
+  "hash": "38957166feaa",
+  "duration": 143.3,
+  "bytes": 860094,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-perfekcionizm": {
+  "hash": "3a38bda32034",
+  "duration": 144.2,
+  "bytes": 865684,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-proyavlyajsya-legko": {
+  "hash": "cb52d6cc8ab8",
+  "duration": 123.0,
+  "bytes": 738481,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-samoocenka": {
+  "hash": "aab7fa706792",
+  "duration": 140.9,
+  "bytes": 846073,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-samotsennost": {
+  "hash": "7a86d9e726bf",
+  "duration": 132.6,
+  "bytes": 796448,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-samozvanets-strah-razoblacheniya": {
+  "hash": "f20b08eba081",
+  "duration": 155.9,
+  "bytes": 935931,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-stoimost-uslugi": {
+  "hash": "f807daf83f60",
+  "duration": 159.7,
+  "bytes": 958691,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-strah-uspeha": {
+  "hash": "847a59ec042f",
+  "duration": 157.1,
+  "bytes": 942847,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-vsyo-nachinaetsya-s-mechty": {
+  "hash": "fc6fba046565",
+  "duration": 153.4,
+  "bytes": 920796,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-vsyo-pod-kontrolem": {
+  "hash": "d76e1050d5ff",
+  "duration": 142.2,
+  "bytes": 853683,
+  "voice": "ru-RU-SvetlanaNeural"
+ },
+ "trening-ya-vizhu-dengi": {
+  "hash": "61f401d425c4",
+  "duration": 135.3,
+  "bytes": 812346,
   "voice": "ru-RU-SvetlanaNeural"
  }
 }
